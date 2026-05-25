@@ -3,7 +3,10 @@ from django.http import HttpResponse
 
 #http://127.0.0.1:8000/cardapio/
 def index(request):
-    return render(request, 'Post/index.html')
+    context={
+        'mensagem':'Seja bem vindo ao cardapio',
+    }
+    return render(request, 'Post/index.html', context)
 # Create your views here.
 
 #http://127.0.0.1:8000/cardapio/sobre
