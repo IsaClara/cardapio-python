@@ -19,7 +19,7 @@ class AlimentoCardapio(models.Model):
     foto_alimento = models.ImageField('foto', upload_to='fotoalimento/', blank=True, null=True)
     preco = models.DecimalField('Preço', max_digits=5, decimal_places=2,default=0)
     disponivel= models.BooleanField('Disponivel', default=True)
-    disponivel_estoque = models.IntegerField('Estoque disponivel:', default=0)
+    disponivel_estoque = models.PositiveIntegerField('Estoque disponivel:', default=0)
 
     #relacionamentos
 

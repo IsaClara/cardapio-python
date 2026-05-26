@@ -1,11 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-
+from .models import AlimentoCardapio
 #http://127.0.0.1:8000/cardapio/
 def index(request):
-    context={
-        'mensagem':'Seja bem vindo ao cardapio',
-    }
+    cardapio = AlimentoCardapio.objects.filter(disponivel=True).order_by('nome_alimento')[:20]
+    context={'mensagem':'Seja bem vindo ao cardapio', 'cardapio': cardapio}
     return render(request, 'Post/index.html', context)
 # Create your views here.
 

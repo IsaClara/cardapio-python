@@ -3,11 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Cardápio Digital</title>
 </head>
 <body>
     <H1>OLA MUNDO</H1>
         <h2>{{ mensagem }}</h2>
+
+        <h3>Nosso cardápio:</h3>
+
+        {% if cardapio %}
+
+        <ul>
+                {% for alimento in cardapio %}
+
+            <li>
+                    {%if alimento.foto_alimento %}
+                    <img src="{{ alimento.foto_alimento.url }}" alt="" width="120px">
+                    {% else %}
+                    <p>sem foto disponivel</p>
+                    {% endif %}
+
+                    <p>{{ alimento.nome_alimento }}</p> 
+                    <p>Categoria: {{ alimento.categoria.nome }}</p> 
+                    <p>Descrição: {{ alimento.descricao }}</p> 
+                    <p>Preço: R$ {{ alimento.preco }}</p> 
+
+                    {% if alimento.disponivel_estoque > 0 %}
+                    <p>Estoque: {{ alimento.disponivel_estoque }}</p>
+                    {% else %}
+                    <p>Não temos mais disponível</p>
+                    {% endif %}
+            </li>
+
+            {% endfor %}
     
+        </ul>
+    {% else %}
+    <p>Não existe nenhum alimento disponível no cardápio agora</p>
+    {% endif%}
 </body>
 </html>
