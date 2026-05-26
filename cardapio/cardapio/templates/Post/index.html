@@ -6,9 +6,24 @@
     <title>Cardápio Digital</title>
 </head>
 <body>
-    <H1>OLA MUNDO</H1>
         <h2>{{ mensagem }}</h2>
 
+        <!-- lista de categorias -->
+        <form>
+            <select name="g" id="id_categoria" onchange="this.form.submit()">
+                <option value="">-- Todos os Produtos --</option>
+                
+                {% for item in categorias %}
+                    <option value="{{ item.id }}"
+                     {% if item.id|stringformat:"s" == busca_atual %}selected
+                     {% endif %}>
+                        {{ item.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+
+            
         <h3>Nosso cardápio:</h3>
 
         {% if cardapio %}
@@ -29,10 +44,19 @@
                     <p>Preço: R$ {{ alimento.preco }}</p> 
 
                     {% if alimento.disponivel_estoque > 0 %}
-                    <p>Estoque: {{ alimento.disponivel_estoque }}</p>
+                    <p>Disponivel: {{ alimento.disponivel_estoque }} 
+                        
+                        <button>+</button>
+                        
+                        <button>-</button></p>
+
+                        <button>selecionar</button>
+
                     {% else %}
                     <p>Não temos mais disponível</p>
                     {% endif %}
+
+                    
             </li>
 
             {% endfor %}
@@ -40,6 +64,9 @@
         </ul>
     {% else %}
     <p>Não existe nenhum alimento disponível no cardápio agora</p>
-    {% endif%}
+    {% endif%} 
+
+    
+</label>
 </body>
 </html>

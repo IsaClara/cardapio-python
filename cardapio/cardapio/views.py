@@ -1,12 +1,43 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from .models import AlimentoCardapio
+from .models import AlimentoCardapio,Categoria
 #http://127.0.0.1:8000/cardapio/
+#onde acontece a criação do card do alimento
 def index(request):
+    categorias = Categoria.objects.all()
     cardapio = AlimentoCardapio.objects.filter(disponivel=True).order_by('nome_alimento')[:20]
-    context={'mensagem':'Seja bem vindo ao cardapio', 'cardapio': cardapio}
+
+    context={'mensagem':'Seja bem vindo ao cardapio',
+             'categorias': categorias,
+              'cardapio': cardapio}
+    
     return render(request, 'Post/index.html', context)
-# Create your views here.
+
+
+#vai filtrar por ID
+def filtroCategoria(request):
+    busca = request.GET.get('g', '').strip()
+    categorias = Categoria.objects.all()
+
+    # Se escolheu uma categoria específica
+    if busca and busca.isdigit():
+
+        categoria_id = int(busca)
+        # Filtra estritamente os alimentos da categoria selecionada
+        cardapio = AlimentoCardapio.objects.filter(disponivel=True, categoria_id=categoria_id).order_by('nome_alimento')
+    else:
+        # Se escolheu "Todos os Produtos" (vazio), mostra tudo de novo
+        cardapio = AlimentoCardapio.objects.filter(disponivel=True).order_by('nome_alimento')[:20]
+
+    context = {
+        'mensagem': 'Filtrado por Categoria',
+        'categorias': categorias,
+        'cardapio': cardapio,
+        'busca_atual': busca, # Mantém o select marcado com a opção escolhida
+    }
+    return render(request, 'Post/index.html', context)
+
+
 
 #http://127.0.0.1:8000/cardapio/sobre
 def sobre(request):
