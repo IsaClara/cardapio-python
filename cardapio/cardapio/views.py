@@ -37,7 +37,15 @@ def filtroCategoria(request):
     }
     return render(request, 'Post/index.html', context)
 
+# para registrar todos os alimentos e mandar para a tela de pedidos
+def telaPedido(request):
+    pegar_pedido = request.GET.get('id')
+    alimento_id= get_object_or_404(AlimentoCardapio,id=alimento_id)
+    context ={
+        'alimento': alimento_id
+    }
 
+    return render(request, 'Post/index.html', context)
 
 #http://127.0.0.1:8000/cardapio/sobre
 def sobre(request):
