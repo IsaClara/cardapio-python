@@ -62,4 +62,24 @@ class Pedido(models.Model):
     def __str__(self):
         return f'{self.cliente} - {self.criado_em}'
     
+
+class ItemPedidos(models.Model):
+    pedido = models.ForeignKey(
+        Pedido,
+        on_delete=models.CASCADE,
+        related_name='Itens')
+    alimento = models.ForeignKey(
+        AlimentoCardapio,
+        on_delete=models.PROTECT
+    )
+    quantidade = models.PositiveIntegerField(
+        default=1)
+    
+    preco_unitario = models.DecimalField(
+        max_digits=5, decimal_places=2
+    )
+
+    def __str__(self):
+        # Corrigido aqui para não quebrar o painel admin
+        return f'{self.pedido.id} - {self.alimento.nome_alimento}' 
 # Create your models here.

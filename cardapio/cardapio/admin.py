@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Categoria,Cliente,AlimentoCardapio
+from .models import Categoria,Cliente,AlimentoCardapio,Pedido,ItemPedidos
 
 # Register your models here.
 
@@ -42,3 +42,16 @@ class AlimentoCardapioAdmin(admin.ModelAdmin):
         
     )
     list_per_page=30
+
+class ItemPedidoInline(admin.TabularInline):
+    model = ItemPedidos
+    extra = 0
+    # deixado como 'modo leitura' pro dono nao alterar o pedido kkkkk
+    readonly_fields = ('alimento', 'quantidade', 'preco_unitario') 
+
+@admin.register(Pedido)
+class PedidoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cliente', 'criado_em')
+    list_filter = ('criado_em',)
+    search_fields = ('cliente__nome_cliente',)
+    inlines = [ItemPedidoInline] # Mostra os itens comprados dentro do pedido correspondente
