@@ -3,7 +3,7 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-app_name = 'cardapio'
+app_name = 'cardapio_app'
 
 urlpatterns = [
     # http://127.0.0

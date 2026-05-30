@@ -45,7 +45,7 @@ def index(request):
 
     #LISTAGEM, FILTROS E PARÂMETRO DO MODAL E MÉTODO (GET) 
     busca = request.GET.get('g', '').strip()
-    pegar_pedido = request.GET.get('pegar_pedido', '').strip()
+    ver_carrinho = request.GET.get('ver_carrinho', '').strip()
     
     categorias = Categoria.objects.all()
     alimento_selecionado = None
@@ -56,15 +56,19 @@ def index(request):
     else:
         cardapio = AlimentoCardapio.objects.filter(disponivel=True).order_by('nome_alimento')[:20]
 
-    if pegar_pedido and pegar_pedido.isdigit():
-        alimento_selecionado = get_object_or_404(AlimentoCardapio, id=int(pegar_pedido))
+    abrir_modal_pedidos = False
+    if ver_carrinho == 'sim':
+        abrir_modal_pedidos = True
+
+    
+
 
     context = {
-        'mensagem': 'Filtrado por Categoria' if busca else 'Seja bem-vindo ao cardápio',
+        'mensagem': 'Bem-vindo!',
         'categorias': categorias,
         'cardapio': cardapio,
         'busca_atual': busca,
-        'alimento_selecionado': alimento_selecionado,
+        'abrir_modal_pedidos': abrir_modal_pedidos, 
     }
     
     return render(request, 'Post/index.html', context)

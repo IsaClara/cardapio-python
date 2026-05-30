@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cardapio', '0001_initial'),
+        ('cardapio_app', '0001_initial'),
     ]
 
     operations = [

@@ -1,0 +1,168 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cardápio Digital</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <script src="{% static 'js/card_comida.js' %}"></script>
+  </head>
+  <body>
+    {% if messages %} {% for message in messages %} {{ message }} {% endfor %}
+    {% endif %}
+
+    <h1>{{ mensagem }}</h1>
+
+    <main>
+      <!-- Filtro de Categorias -->
+      <!--NOTA: Acho que seria legal em vez de ser um select ter botões pra deslizar pro lado-->
+      <h2>Categoria</h2>
+      <form method="GET" action="{% url 'cardapio_app:index' %}">
+        <select name="g" id="id_categoria" onchange="this.form.submit()">
+          <option value="">...</option>
+          {% for item in categorias %}
+          <option value="{{ item.id }}">{{ item.nome }}</option>
+          {% endfor %}
+        </select>
+      </form>
+
+      {% if cardapio %}
+      <ul>
+        {% for alimento in cardapio %}
+        <li>
+          {% if alimento.foto_alimento %}
+          <img src="{{ alimento.foto_alimento.url }}" alt="" />
+          {% else %}
+          <p>sem foto disponível</p>
+          {% endif %}
+
+          <div class="comida_info">
+            <p class="comida_nome">{{ alimento.nome_alimento }}</p>
+            <p
+              class="comida_descricao"
+              data-fulltext="{{ alimento.descricao }}"
+            ></p>
+            <div class="comida_subdiv">
+              <p class="comida_preco">R$ {{ alimento.preco }}</p>
+
+              <!-- Botão que envia os dados para abrir o modal -->
+              {% if alimento.disponivel_estoque > 0 %}
+              <form method="GET" action="{% url 'cardapio_app:index' %}">
+                <input type="hidden" name="g" value="{{ busca_atual }}" />
+                <input
+                  type="hidden"
+                  name="pegar_pedido"
+                  value="{{ alimento.id }}"
+                />
+                <button type="submit" class="btn_adicionar">+</button>
+              </form>
+              {% else %}
+              <p style="color: red">Não temos mais disponível</p>
+              {% endif %}
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>Não existe nenhum alimento disponível no cardápio agora</p>
+      {% endif%}
+    </main>
+
+    {% if abrir_modal_pedidos %}
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Meu pedido</h3>
+        </div>
+
+        <!-- Área de Scroll dos Itens Selecionados -->
+        <div class="modal-lista-scroll">
+          <!-- Fazer a partir daqui para gerar os cards gerados -->
+
+          <!-- Exemplo de Card 1 -->
+          <div class="modal-item-card">
+            <!-- Nota: Configurar o clique para remover este item específico da sacola -->
+            <button type="button" class="btn-remover-item" title="Remover item">
+              ✕
+            </button>
+
+            <img
+              src="https://unsplash.com"
+              alt="Foto do item"
+              class="modal-item-img"
+            />
+            <div class="comida_info">
+              <p class="comida_nome">Pizza Brigadeiro</p>
+              <p class="comida_descricao">Quantidade: <strong>1x</strong></p>
+              <div class="comida_subdiv">
+                <p class="comida_preco">R$ 20,00</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exemplo de Card 2 -->
+          <div class="modal-item-card">
+            <button type="button" class="btn-remover-item" title="Remover item">
+              ✕
+            </button>
+
+            <img
+              src="https://unsplash.com"
+              alt="Foto do item"
+              class="modal-item-img"
+            />
+            <div class="comida_info">
+              <p class="comida_nome">Pizza Brigadeiro</p>
+              <p class="comida_descricao">Quantidade: <strong>1x</strong></p>
+              <div class="comida_subdiv">
+                <p class="comida_preco">R$ 20,00</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulário de Envio do Pedido -->
+        <form method="GET" action="">
+          <div class="form-group">
+            <label for="id_nome_cliente">Seu Nome</label>
+            <!--Aqui fica talvez aquela parte de clientes lá, pra salvar o nome da pessoa que fez o pedido-->
+            <input
+              type="text"
+              id="id_nome_cliente"
+              name="nome_cliente"
+              placeholder="Digite seu nome completo"
+              required
+            />
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn-enviar-pedido">
+              Enviar pedido
+            </button>
+            <a
+              href="{% url 'cardapio_app:index' %}?g={{ busca_atual }}"
+              class="btn-cancelar"
+              >Voltar ao cardápio</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- O botão só vaia aparexer se o modal NÃO estiver aberto :D -->
+    {% if not abrir_modal_pedidos %}
+    <form
+      method="GET"
+      action="{% url 'cardapio_app:index' %}"
+      class="rodape-pedidos-form"
+    >
+      <input type="hidden" name="g" value="{{ busca_atual }}" />
+      <input type="hidden" name="ver_carrinho" value="sim" />
+      <button type="submit" class="btn_pedido">Meus Pedidos</button>
+    </form>
+    {% endif %}
+  </body>
+</html>

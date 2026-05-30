@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cardapio', '0002_alter_alimentocardapio_disponivel_estoque'),
+        ('cardapio_app', '0002_alter_alimentocardapio_disponivel_estoque'),
     ]
 
     operations = [
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('criado_em', models.DateTimeField(auto_now_add=True)),
-                ('cliente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Pedidos', to='cardapio.cliente')),
+                ('cliente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Pedidos', to='cardapio_app.cliente')),
             ],
         ),
     ]
