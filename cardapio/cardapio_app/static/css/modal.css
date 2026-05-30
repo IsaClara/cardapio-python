@@ -1,0 +1,165 @@
+/* TODAS AS CONFIGS DO MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--bg-secondary);
+  width: 100%;
+  max-width: 450px;
+  max-height: 85vh;
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal-header h3 {
+  color: var(--text-main);
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: bolder;
+  text-align: center;
+}
+
+/*SCROLL para caso tenha mts itens no pedido >_>*/
+.modal-lista-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-bottom: 20px;
+}
+
+.modal-item-card {
+  position: relative;
+  display: flex;
+  background-color: var(--bg_primary);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.06);
+  border-radius: 13px;
+  overflow: hidden;
+  padding: 16px;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: stretch;
+}
+
+.btn-remover-item {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #d9c3b0;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.btn-remover-item:hover,
+.btn-remover-item:active {
+  color: var(--accent-color);
+  transform: scale(1.1);
+}
+
+.modal-item-img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 13px;
+  flex-shrink: 0;
+}
+
+/* Inputs do formulário */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  color: var(--text-main);
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 1px solid #d9c3b0;
+  border-radius: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  background-color: var(--bg_primary);
+  color: var(--text-main);
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: var(--accent-color);
+}
+
+.modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.btn-enviar-pedido {
+  background-color: var(--accent-color);
+  color: var(--bg_primary);
+  border: none;
+  border-radius: 12px;
+  width: 100%;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(242, 92, 5, 0.2);
+  transition: transform 0.1s ease;
+}
+
+.btn-enviar-pedido:active {
+  transform: scale(0.97);
+}
+
+.btn-cancelar {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 4px;
+}
+
+.btn-cancelar:hover {
+  text-decoration: underline;
+}

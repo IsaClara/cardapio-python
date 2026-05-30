@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('preco', models.DecimalField(decimal_places=2, default=0, max_digits=5, verbose_name='Preço')),
                 ('disponivel', models.BooleanField(default=True, verbose_name='Disponivel')),
                 ('disponivel_estoque', models.IntegerField(default=0, verbose_name='Estoque disponivel:')),
-                ('categoria', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='Alimentos', to='cardapio.categoria', verbose_name='Categoria')),
+                ('categoria', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='Alimentos', to='cardapio_app.categoria', verbose_name='Categoria')),
             ],
             options={
                 'verbose_name': 'AlimentoCardapio',

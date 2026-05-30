@@ -1,0 +1,257 @@
+@import url("https://googleapis.com");
+@import url("modal.css");
+
+/* CORES */
+:root {
+  --bg_primary: white;
+  --bg-secondary: #f5f2eb;
+  --accent-color: #f25c05;
+  --accent-hover: lightgrey;
+  --accent-color-text: white;
+  --accent-color-text-hover: gray;
+  --text-main: #231711;
+  --text-secondary: #5a4a42;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg_primary);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1 {
+  color: var(--text-main);
+  font-size: 3rem;
+  text-align: left;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+
+  padding: 6rem 0 3rem 0;
+  margin-left: 16px;
+}
+
+main {
+  background: var(--bg-secondary);
+
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  padding: 12px;
+
+  flex: 1;
+}
+
+.rodape-pedidos-form {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+h2 {
+  margin: 8px;
+
+  color: var(--text-main);
+  font-size: 1.6rem;
+  text-align: left;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  margin-top: 0.5rem;
+}
+
+#id_categoria {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  padding: 0.8rem 1rem;
+
+  margin: 8px;
+  background-color: var(--accent-color);
+  outline: none;
+
+  border: none;
+  border-radius: 13px;
+
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bolder;
+  color: var(--accent-color-text);
+}
+ul {
+  padding: 0;
+  margin: 0;
+  margin-top: 1rem;
+  margin-bottom: 8rem;
+
+  list-style: none;
+}
+li {
+  display: flex;
+  align-items: stretch;
+  background-color: var(--bg_primary);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 13px;
+  overflow: hidden;
+
+  height: auto;
+  padding: 16px;
+  margin-bottom: 16px;
+
+  gap: 16px;
+}
+
+li img {
+  width: 151px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 13px;
+
+  flex-shrink: 0;
+  display: block;
+}
+
+.comida_info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.comida_nome {
+  color: var(--text-main);
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-size: 1.4rem;
+  font-weight: bolder;
+  padding: 0;
+  margin: 0;
+}
+
+.comida_descricao {
+  padding: 0;
+  padding-top: 6px;
+  font-size: 1rem;
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-secondary);
+
+  margin: 6px 0;
+}
+
+li.expanded .comida_descricao {
+  display: block;
+  -webkit-line-clamp: unset;
+}
+
+.ver-mais {
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.comida_subdiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.comida_subdiv form {
+  display: flex;
+  align-items: center;
+  margin-right: 4px;
+}
+
+.comida_preco {
+  color: var(--text-main);
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-size: 1.3rem;
+  font-weight: bolder;
+}
+
+.btn_adicionar {
+  background-color: var(--accent-color);
+  border: none;
+  border-radius: 50%;
+
+  width: 45px;
+  height: 45px;
+
+  color: var(--accent-color-text);
+  font-size: 28px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn_adicionar:active {
+  transform: scale(0.92);
+  background: var(--accent-hover);
+  color: var(--accent-color-text-hover);
+}
+
+/*Botão de meus pedidos*/
+.btn_pedido {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 1rem 1rem;
+  white-space: nowrap;
+  width: max-content;
+
+  background-color: var(--text-main);
+  outline: none;
+  border: none;
+  border-radius: 13px;
+
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: bolder;
+  color: var(--accent-color-text);
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+  -webkit-tap-highlight-color: transparent;
+}
