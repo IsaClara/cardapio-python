@@ -1,0 +1,503 @@
+/* TODAS AS CONFIGS DA TELA DE ADMIN */
+
+/* CORES */
+:root {
+  --bg_primary: white;
+  --bg-secondary: #f5f2eb;
+  --accent-color: #f25c05;
+  --accent-hover: lightgrey;
+  --accent-color-text: white;
+  --accent-color-text-hover: gray;
+  --text-main: #231711;
+  --text-secondary: #5a4a42;
+}
+
+body,
+html {
+  margin: 8px;
+  padding: 0;
+  width: calc(100% - 16px);
+  min-height: 100vh;
+  font-family: "Montserrat", sans-serif;
+  background-color: var(--bg-secondary);
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/*ESTRUTURA DO TOPO*/
+.dashboard-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 4px;
+}
+
+.dash-header {
+  padding: 2rem 16px 1rem 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dash-header h1 {
+  padding: 0;
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--text-main);
+}
+
+.btn-sair {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+}
+
+.titulo-sessao {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.feedback-vazio,
+.config-descricao-texto {
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+/*FORMULÁRIOS E INPUTS MODERNOS COM TEXTAREA*/
+.form-admin-bloco {
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  color: var(--text-main);
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #d9c3b0;
+  border-radius: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  background-color: var(--bg_primary);
+  color: var(--text-main);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--accent-color);
+}
+
+/* Botões dos Formulários */
+.btn-criar-lista,
+.btn-salvar-cardapio {
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+  transition: transform 0.1s ease;
+}
+
+.btn-criar-lista {
+  background-color: var(--text-main);
+  color: white;
+}
+
+.btn-salvar-cardapio {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.btn-criar-lista:active,
+.btn-salvar-cardapio:active {
+  transform: scale(0.98);
+}
+
+/*CARDS DE COMANDAS (ABA PEDIDOS)*/
+.container-dos-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.comanda-card {
+  background: var(--bg_primary);
+  border-radius: 13px;
+  padding: 16px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  border-left: 5px solid var(--accent-color);
+  box-sizing: border-box;
+}
+
+.comanda-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.badge-status {
+  background: #fff3cd;
+  color: #856404;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.comanda-itens-texto {
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.comanda-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comanda-total-texto {
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-main);
+}
+
+.comanda-acoes {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-status {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    transform 0.1s;
+}
+
+.btn-status:active {
+  transform: scale(0.95);
+}
+
+.btn-preparar {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+.btn-preparar:hover {
+  background-color: #ffeeba;
+}
+.btn-concluir {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.btn-concluir:hover {
+  background-color: #c3e6cb;
+}
+
+/*LISTAS DE EXCLUSÃO/EDIÇÃO*/
+.gerenciamento-lista-wrapper {
+  margin-top: 32px;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.categoria-bloco {
+  background-color: var(--bg_primary);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  border: 1px solid #e9e4dc;
+}
+
+.categoria-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--bg-secondary);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.categoria-nome {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 16px;
+}
+
+.alimentos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alimento-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.alimento-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 70%;
+}
+
+.alimento-nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Visual da Descrição nas linhas atuais */
+.alimento-descricao {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.alimento-preco {
+  font-size: 13px;
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.acoes-grupo {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-acao {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  cursor: pointer;
+  transition:
+    transform 0.1s ease,
+    background-color 0.2s ease;
+}
+
+.btn-acao:active {
+  transform: scale(0.95);
+}
+.btn-editar-mini {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+.btn-editar-mini:hover {
+  background-color: #cbd5e1;
+}
+.btn-deletar-mini {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+.btn-deletar-mini:hover {
+  background-color: #fca5a5;
+}
+
+.link-preview {
+  display: block;
+  background: #e2e8f0;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 16px;
+  font-family: "Montserrat", sans-serif;
+}
+
+/*MODAL DO CLIENTE (MANTIDO PARA REUSO)*/
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1000;
+}
+.modal-content {
+  background-color: var(--bg-secondary);
+  width: 100%;
+  max-width: 450px;
+  max-height: 85vh;
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.25s ease-out;
+}
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.modal-header h3 {
+  color: var(--text-main);
+  font-size: 1.5rem;
+  margin: 0 0 20px 0;
+  font-weight: bolder;
+  text-align: center;
+}
+.modal-lista-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-bottom: 20px;
+}
+.modal-item-card {
+  position: relative;
+  display: flex;
+  background-color: var(--bg_primary);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.06);
+  border-radius: 13px;
+  overflow: hidden;
+  padding: 16px;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: stretch;
+}
+.btn-remover-item {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #d9c3b0;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+.btn-remover-item:hover {
+  color: var(--accent-color);
+}
+.modal-item-img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 13px;
+  flex-shrink: 0;
+}
+.modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+.btn-enviar-pedido {
+  background-color: var(--accent-color);
+  color: var(--bg_primary);
+  border: none;
+  border-radius: 12px;
+  width: 100%;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(242, 92, 5, 0.2);
+}
+.btn-cancelar {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 4px;
+}
+.btn-cancelar:hover {
+  text-decoration: underline;
+}
+
+/* RESPONSIVIDADE EXTREMA)*/
+@media (min-width: 600px) {
+  .container-dos-cards {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .comanda-card {
+    flex: 1 1 calc(50% - 12px);
+  }
+}
+@media (max-width: 360px) {
+  .alimento-linha {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .alimento-linha .acoes-grupo {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .alimento-info {
+    max-width: 100%;
+  }
+}

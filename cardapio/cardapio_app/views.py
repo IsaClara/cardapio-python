@@ -80,3 +80,44 @@ def sobre(request):
 def contato(request):
     from django.http import HttpResponse
     return HttpResponse('O seu email é: teste@gmail.com')
+
+
+
+# ISSO AQUI É SÓ DE TESTE
+
+def login_view(request):
+    # Se a pessoa enviar o formulário, redireciona direto pro dashboard (simulação)
+    if request.method == 'POST':
+        return redirect('cardapio_app:dashboard')
+    return render(request, 'post/login.html')
+
+def dashboard_view(request):
+    # Dados fictícios para testar o front-end do painel do usuário
+    categorias_mock = [
+        {'id': 1, 'nome': 'Hambúrgueres', 'quantidade': 5},
+        {'id': 2, 'nome': 'Bebidas', 'quantidade': 3},
+        {'id': 3, 'nome': 'Pizzas', 'quantidade': 4},
+    ]
+    
+    comandas_mock = [
+        {
+            'id': 101,
+            'cliente': 'João Silva',
+            'itens': '1x Pizza Brigadeiro, 1x Coca-Cola',
+            'total': '27,00',
+            'status': 'Pendente'
+        },
+        {
+            'id': 102,
+            'cliente': 'Maria Souza',
+            'itens': '2x X-Burguer, 1x Batata Frita',
+            'total': '54,00',
+            'status': 'Preparando'
+        }
+    ]
+    
+    context = {
+        'categorias': list(categorias_mock),
+        'comandas': comandas_mock,
+    }
+    return render(request, 'post/dashboard.html', context)

@@ -1,0 +1,120 @@
+<!--PRA ACESSAR AQUI USA http://127.0.0.1:8000/cardapio/login/ E ESCREVE QUALQUER COISA-->
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Comanda Digital</title>
+    <link rel="stylesheet" href="{% static 'css/admin_styles.css' %}" />
+    <style>
+      /* Sobrescreve as margens do CSS global apenas para travar a tela de login */
+      html,
+      body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important; /* Mata qualquer chance de scroll */
+      }
+
+      .login-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 100vh;
+        padding: 24px;
+        background-color: var(--bg-secondary);
+        box-sizing: border-box;
+      }
+
+      .login-card {
+        background-color: var(--bg_primary);
+        width: 100%;
+        max-width: 400px;
+        padding: 32px;
+        border-radius: 24px;
+        box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.08);
+        box-sizing: border-box;
+      }
+
+      .login-header {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .login-header h2 {
+        margin: 0;
+        text-align: center;
+        font-weight: bold;
+        color: var(--text-main);
+      }
+
+      .login-subtitulo {
+        color: var(--text-secondary);
+        font-family: "Montserrat", sans-serif;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        margin-bottom: 0;
+      }
+
+      .btn-entrar {
+        background-color: var(--accent-color);
+        color: var(--bg_primary);
+        border: none;
+        border-radius: 12px;
+        width: 100%;
+        padding: 14px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: transform 0.1s ease;
+      }
+
+      .btn-entrar:active {
+        transform: scale(0.97);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <h2>Acessar Painel</h2>
+          <p class="login-subtitulo">Gerencie suas comandas e cardápio</p>
+        </div>
+
+        <form method="POST" action="{% url 'cardapio_app:login' %}">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label for="id_username">Usuário</label>
+            <input
+              type="text"
+              id="id_username"
+              name="username"
+              placeholder="Seu usuário"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="id_password">Senha</label>
+            <input
+              type="password"
+              id="id_password"
+              name="password"
+              placeholder="Sua senha"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-entrar">Entrar</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

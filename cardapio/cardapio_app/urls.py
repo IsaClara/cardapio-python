@@ -15,6 +15,10 @@ urlpatterns = [
 
     # http://127.0.0contato
     path('contato/', views.contato, name='contato'),
+
+
+    path('login/', views.login_view, name='login'),
+    path('dashboard/', views.dashboard_view, name='dashboard'),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,277 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel de Controle</title>
+    <link rel="stylesheet" href="{% static 'css/admin_styles.css' %}" />
+    <style>
+      /* Abas de Navegação Estilo Mobile */
+      .tab-bar {
+        display: flex;
+        background: var(--bg_primary);
+        margin: 0 16px 16px 16px;
+        border-radius: 13px;
+        padding: 4px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        background: none;
+        font-family: "Montserrat", sans-serif;
+        font-weight: bold;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-radius: 10px;
+        text-align: center;
+      }
+      .tab-btn.active {
+        background-color: var(--accent-color);
+        color: var(--accent-color-text);
+      }
+
+      /* Conteúdo das Abas */
+      .tab-content {
+        display: none;
+        padding: 0 16px;
+      }
+      .tab-content.active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="dash-header">
+      <h1>Painel Gerente</h1>
+      <a href="{% url 'cardapio_app:login' %}" class="btn-sair">Sair</a>
+    </header>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('comandas', this)">
+        Pedidos
+      </button>
+      <button class="tab-btn" onclick="switchTab('cardapio', this)">
+        Editar Itens
+      </button>
+      <button class="tab-btn" onclick="switchTab('config', this)">
+        Visualizar
+      </button>
+    </div>
+
+    <main class="dashboard-container">
+      <div id="comandas" class="tab-content active">
+        <h2 class="titulo-sessao">Comandas Ativas</h2>
+        <div class="container-dos-cards">
+          {% for comanda in comandas %}
+          <div class="comanda-card">
+            <div class="comanda-meta">
+              <strong>#{{ comanda.id }} - {{ comanda.cliente }}</strong>
+              <span class="badge-status">{{ comanda.status }}</span>
+            </div>
+
+            <p class="comanda-itens-texto">{{ comanda.itens }}</p>
+
+            <div class="comanda-rodape">
+              <span class="comanda-total-texto"
+                >Total: R$ {{ comanda.total }}</span
+              >
+              <div class="comanda-acoes">
+                {% if comanda.status == 'Pendente' %}
+                <button class="btn-status btn-preparar">Aceitar Pedido</button>
+                {% elif comanda.status == 'Preparando' %}
+                <button class="btn-status btn-concluir">
+                  ✓ Marcar como Feito
+                </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <p class="feedback-vazio">Nenhuma comanda recebida no momento.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div id="cardapio" class="tab-content">
+        <h2 class="titulo-sessao">Criar Categoria</h2>
+        <form
+          class="form-admin-bloco"
+          onsubmit="
+            event.preventDefault();
+            alert('Front-end funcionando! A lógica salvará isso depois.');
+          "
+        >
+          <div class="form-group">
+            <label for="nome_cat">Nome da Categoria</label>
+            <input
+              type="text"
+              id="nome_cat"
+              placeholder="Ex: Bebidas, Sobremesas"
+              required
+            />
+          </div>
+          <button type="submit" class="btn-criar-lista">
+            + Nova Categoria
+          </button>
+        </form>
+
+        <div class="gerenciamento-lista-wrapper">
+          <h2 class="titulo-sessao">Categorias e Alimentos Atuais</h2>
+
+          <div class="categoria-bloco">
+            <div class="categoria-topo">
+              <span class="categoria-nome">Hambúrgueres</span>
+              <div class="acoes-grupo">
+                <button class="btn-acao btn-deletar-mini">Apagar</button>
+              </div>
+            </div>
+
+            <div class="alimentos-lista">
+              <div class="alimento-linha">
+                <div class="alimento-info">
+                  <span class="alimento-nome">X-Burguer Tradicional</span>
+                  <span class="alimento-descricao"
+                    >Pão brioche, blend 150g e queijo cheddar prato.</span
+                  >
+                  <span class="alimento-preco">R$ 24,90</span>
+                </div>
+                <div class="acoes-grupo">
+                  <button class="btn-acao btn-editar-mini">Editar</button>
+                  <button class="btn-acao btn-deletar-mini">Apagar</button>
+                </div>
+              </div>
+
+              <div class="alimento-linha">
+                <div class="alimento-info">
+                  <span class="alimento-nome">Combo Smash Duplo</span>
+                  <span class="alimento-descricao"
+                    >2 blends smash 80g, muito queijo e fritas inclusa.</span
+                  >
+                  <span class="alimento-preco">R$ 38,00</span>
+                </div>
+                <div class="acoes-grupo">
+                  <button class="btn-acao btn-editar-mini">Editar</button>
+                  <button class="btn-acao btn-deletar-mini">Apagar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="categoria-bloco">
+            <div class="categoria-topo">
+              <span class="categoria-nome">Bebidas</span>
+              <div class="acoes-grupo">
+                <button class="btn-acao btn-deletar-mini">Apagar</button>
+              </div>
+            </div>
+
+            <div class="alimentos-lista">
+              <div class="alimento-linha">
+                <div class="alimento-info">
+                  <span class="alimento-nome">Coca-Cola Lata</span>
+                  <span class="alimento-descricao"
+                    >Lata de 350ml trincando de gelada.</span
+                  >
+                  <span class="alimento-preco">R$ 6,00</span>
+                </div>
+                <div class="acoes-grupo">
+                  <button class="btn-acao btn-editar-mini">Editar</button>
+                  <button class="btn-acao btn-deletar-mini">Apagar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="titulo-sessao">Adicionar Comida</h2>
+        <form
+          class="form-admin-bloco"
+          onsubmit="
+            event.preventDefault();
+            alert('Item enviado (Simulação)!');
+          "
+        >
+          <div class="form-group">
+            <label for="id_cat_select">Selecione a Categoria</label>
+            <select id="id_cat_select">
+              {% for item in categorias %}
+              <option value="{{ item.id }}">{{ item.nome }}</option>
+              {% empty %}
+              <option value="">Hambúrgueres</option>
+              <option value="">Bebidas</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="nome_comida">Nome do Alimento</label>
+            <input
+              type="text"
+              id="nome_comida"
+              placeholder="Ex: Batata Frita Turbinada"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="desc_comida">Descrição</label>
+            <textarea
+              id="desc_comida"
+              rows="3"
+              placeholder="Ex: Acompanha cheddar cremoso e pedacinhos de bacon crocante por cima."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="preco_comida">Preço (R$)</label>
+            <input
+              type="number"
+              step="0.01"
+              id="preco_comida"
+              placeholder="0.00"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-salvar-cardapio">
+            Salvar no Cardápio
+          </button>
+        </form>
+      </div>
+
+      <div id="config" class="tab-content">
+        <h2 class="titulo-sessao">Seu Link do Cardápio</h2>
+        <p class="config-descricao-texto">
+          Abaixo está o link que o cliente usará na mesa para fazer os pedidos
+          diretamente no sistema.
+        </p>
+
+        <a
+          href="{% url 'cardapio_app:index' %}"
+          class="link-preview"
+          target="_blank"
+        >
+          Abrir Visão do Cliente
+        </a>
+      </div>
+    </main>
+
+    <script>
+      function switchTab(tabId, button) {
+        const contents = document.querySelectorAll(".tab-content");
+        contents.forEach((content) => content.classList.remove("active"));
+
+        const buttons = document.querySelectorAll(".tab-btn");
+        buttons.forEach((btn) => btn.classList.remove("active"));
+
+        document.getElementById(tabId).classList.add("active");
+        button.classList.add("active");
+      }
+    </script>
+  </body>
+</html>

@@ -18,14 +18,23 @@
       <!-- Filtro de Categorias -->
       <!--NOTA: Acho que seria legal em vez de ser um select ter botões pra deslizar pro lado-->
       <h2>Categoria</h2>
-      <form method="GET" action="{% url 'cardapio_app:index' %}">
-        <select name="g" id="id_categoria" onchange="this.form.submit()">
-          <option value="">...</option>
-          {% for item in categorias %}
-          <option value="{{ item.id }}">{{ item.nome }}</option>
-          {% endfor %}
-        </select>
-      </form>
+      <div class="carrossel-categorias">
+        <a
+          href="{% url 'cardapio_app:index' %}"
+          class="pila-link {% if not busca_atual %}active{% endif %}"
+        >
+          Todos
+        </a>
+
+        {% for item in categorias %}
+        <a
+          href="{% url 'cardapio_app:index' %}?g={{ item.id }}"
+          class="pila-link {% if busca_atual|slugify == item.id|slugify %}active{% endif %}"
+        >
+          {{ item.nome }}
+        </a>
+        {% endfor %}
+      </div>
 
       {% if cardapio %}
       <ul>
