@@ -16,7 +16,9 @@ urlpatterns = [
     # http://127.0.0contato
     path('contato/', views.contato, name='contato'),
 
-
+    path('criar-pedido/', views.criar_pedido, name='criar_pedido'),
+    path('finalizar-pedido/', views.finalizar_pedido, name='finalizar_pedido'),
+    path('deletar-item/<int:item_id>/', views.deletar_pedido, name='deletar_pedido'),
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
 ]

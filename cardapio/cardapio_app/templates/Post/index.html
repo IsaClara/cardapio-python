@@ -57,14 +57,15 @@
 
               <!-- Botão que envia os dados para abrir o modal -->
               {% if alimento.disponivel_estoque > 0 %}
-              <form method="GET" action="{% url 'cardapio_app:index' %}">
-                <input type="hidden" name="g" value="{{ busca_atual }}" />
-                <input
-                  type="hidden"
-                  name="pegar_pedido"
-                  value="{{ alimento.id }}"
-                />
-                <button type="submit" class="btn_adicionar">+</button>
+              <form method="POST" action="{% url 'cardapio_app:criar_pedido' %}">
+                      {% csrf_token %}
+
+                      <input type="hidden" name="alimento_id" value="{{ alimento.id }}">
+                      <input type="hidden" name="nome_cliente">
+                      <div class="quantidade-box">
+  
+
+                      <button type="submit" class="btn_adicionar">+</button>
               </form>
               {% else %}
               <p style="color: red">Não temos mais disponível</p>
@@ -88,77 +89,76 @@
 
         <!-- Área de Scroll dos Itens Selecionados -->
         <div class="modal-lista-scroll">
-          <!-- Fazer a partir daqui para gerar os cards gerados -->
 
-          <!-- Exemplo de Card 1 -->
-          <div class="modal-item-card">
-            <!-- Nota: Configurar o clique para remover este item específico da sacola -->
-            <button type="button" class="btn-remover-item" title="Remover item">
-              ✕
-            </button>
+      {% for pedido in itens_pedido %}
 
-            <img
-              src="https://unsplash.com"
-              alt="Foto do item"
-              class="modal-item-img"
-            />
-            <div class="comida_info">
-              <p class="comida_nome">Pizza Brigadeiro</p>
-              <p class="comida_descricao">Quantidade: <strong>1x</strong></p>
+      <div class="modal-item-card">
+
+                <!--Onde fica o delete dos itens -->
+
+          <form method="POST" action="{% url 'cardapio_app:deletar_pedido' pedido.id %}">
+            {% csrf_token %}
+          <button type="submit" class="btn-remover-item">✕</button>
+          </form>
+
+                  <!-- Lista dos itens no modal -->
+
+          {% if pedido.alimento.foto_alimento %}
+              <img src="{{ pedido.alimento.foto_alimento.url }}"
+                  class="modal-item-img"
+                  alt="{{ pedido.alimento.nome_alimento }}">
+          {% else %}
+              <p>Sem foto</p>
+          {% endif %}
+
+          <div class="comida_info">
+              <p class="comida_nome">
+                  {{ pedido.alimento.nome_alimento }}
+              </p>
+
+              
+              <p class="comida_descricao">
+                
+                 Quantidade: {{ pedido.quantidade }} x
+              </p>
+
               <div class="comida_subdiv">
-                <p class="comida_preco">R$ 20,00</p>
+                  <p class="comida_preco">
+                      R$ {{ pedido.preco_unitario }}
+                  </p>
               </div>
-            </div>
           </div>
 
-          <!-- Exemplo de Card 2 -->
-          <div class="modal-item-card">
-            <button type="button" class="btn-remover-item" title="Remover item">
-              ✕
-            </button>
+      </div>
 
-            <img
-              src="https://unsplash.com"
-              alt="Foto do item"
-              class="modal-item-img"
-            />
-            <div class="comida_info">
-              <p class="comida_nome">Pizza Brigadeiro</p>
-              <p class="comida_descricao">Quantidade: <strong>1x</strong></p>
-              <div class="comida_subdiv">
-                <p class="comida_preco">R$ 20,00</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      {% empty %}
+      <p>Você ainda não possui pedidos.</p>
+      {% endfor %}
+
+      </div>
 
         <!-- Formulário de Envio do Pedido -->
-        <form method="GET" action="">
-          <div class="form-group">
-            <label for="id_nome_cliente">Seu Nome</label>
-            <!--Aqui fica talvez aquela parte de clientes lá, pra salvar o nome da pessoa que fez o pedido-->
-            <input
-              type="text"
-              id="id_nome_cliente"
-              name="nome_cliente"
-              placeholder="Digite seu nome completo"
-              required
-            />
-          </div>
+        <form method="POST" action="{% url 'cardapio_app:finalizar_pedido' %}">
+        {% csrf_token %}
 
-          <div class="modal-footer">
-            <button type="submit" class="btn-enviar-pedido">
-              Enviar pedido
-            </button>
-            <a
-              href="{% url 'cardapio_app:index' %}?g={{ busca_atual }}"
-              class="btn-cancelar"
-              >Voltar ao cardápio</a
-            >
-          </div>
-        </form>
+        <div class="form-group">
+          <label>Seu Nome</label>
+          <input type="text" name="nome_cliente" required>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn-enviar-pedido">
+            Enviar pedido
+          </button>
+
+        <a href="{% url 'cardapio_app:index' %}?g={{ busca_atual }}"
+          class="btn-cancelar">
+          Voltar ao cardápio
+        </a>
       </div>
-    </div>
+    </form>
+          </div>
+        </div>
     {% endif %}
 
     <!-- O botão só vaia aparexer se o modal NÃO estiver aberto :D -->
