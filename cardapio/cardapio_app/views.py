@@ -1,6 +1,8 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect,render
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .models import AlimentoCardapio, Categoria, Cliente, Pedido, ItemPedidos
+from django.contrib.auth import authenticate, login, logout
 
 def index(request):
     busca = request.GET.get('g', '').strip()
@@ -63,13 +65,19 @@ def criar_pedido(request):
     if not pedido:
         pedido = Pedido.objects.create(cliente=cliente)
 
-    # cria item
-    ItemPedidos.objects.create(
-        pedido=pedido,
-        alimento=alimento,
-        quantidade=quantidade,
-        preco_unitario=alimento.preco
-    )
+    # cria item e quando clica no mesmo de novo, a quantidade é somada
+    item, created = ItemPedidos.objects.get_or_create(
+    pedido=pedido,
+    alimento=alimento,
+    defaults={
+        'quantidade': quantidade,
+        'preco_unitario': alimento.preco
+    }
+)
+
+    if not created:
+        item.quantidade += quantidade
+        item.save()
 
     return redirect('cardapio_app:index')
 
@@ -102,27 +110,37 @@ def deletar_pedido(request, item_id):
 
     return redirect('cardapio_app:index')
 
-
-
-def sobre(request):
-    from django.http import HttpResponse
-    return HttpResponse('<h1>Você está na página de sobre</h1>')
-
-def contato(request):
-    from django.http import HttpResponse
-    return HttpResponse('O seu email é: teste@gmail.com')
-
-
-
-# ISSO AQUI É SÓ DE TESTE
-
+#o login vai verificar se a conta admin ou uma conta criada no django admin existe pra poder ir pra parte do dashboard
 def login_view(request):
-    # Se a pessoa enviar o formulário, redireciona direto pro dashboard (simulação)
     if request.method == 'POST':
-        return redirect('cardapio_app:dashboard')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None:
+            login(request, user)
+            return redirect('cardapio_app:dashboard')
+
+        messages.error(request, 'Usuário ou senha inválidos.')
+
     return render(request, 'post/login.html')
 
+#vai dar logout caso clique no botao de sair no dashboard
+def logout_view(request):
+    logout(request)
+    return redirect('cardapio_app:login')
+
+@login_required
 def dashboard_view(request):
+    print("USER:", request.user)
+    print("AUTH:", request.user.is_authenticated)
+
+    categorias = Categoria.objects.all()
     # Dados fictícios para testar o front-end do painel do usuário
     categorias_mock = [
         {'id': 1, 'nome': 'Hambúrgueres', 'quantidade': 5},
@@ -148,7 +166,8 @@ def dashboard_view(request):
     ]
     
     context = {
-        'categorias': list(categorias_mock),
+        'categorias': categorias,
+        'categoria': list(categorias_mock),
         'comandas': comandas_mock,
     }
     return render(request, 'post/dashboard.html', context)

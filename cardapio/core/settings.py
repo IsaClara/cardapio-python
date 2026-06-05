@@ -120,3 +120,12 @@ STATIC_URL = 'static/'
 
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / '/media/'
+
+
+LOGIN_URL = '/cardapio/login/'
+
+# Para onde redirecionar após login bem-sucedido
+LOGIN_REDIRECT_URL = '/cardapio_app/dashboard/'
+
+#Pagina pra onde vai quando da logout
+LOGOUT_REDIRECT_URL = '/cardapio/login/'

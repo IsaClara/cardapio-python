@@ -63,7 +63,13 @@
                       <input type="hidden" name="alimento_id" value="{{ alimento.id }}">
                       <input type="hidden" name="nome_cliente">
                       <div class="quantidade-box">
-  
+                          <div class="quantidade-box">
+
+                        <input type="number"
+                              name="quantidade"
+                              min="1"
+                              value="1">
+                        </div>
 
                       <button type="submit" class="btn_adicionar">+</button>
               </form>

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -9,17 +9,11 @@ urlpatterns = [
     # http://127.0.0
     # Esta rota agora controla a listagem, o filtro por ID e o Modal ao mesmo tempo!
     path('', views.index, name='index'),
-
-    # http://127.0.0sobre
-    path('sobre/', views.sobre, name='sobre'),
-
-    # http://127.0.0contato
-    path('contato/', views.contato, name='contato'),
-
     path('criar-pedido/', views.criar_pedido, name='criar_pedido'),
     path('finalizar-pedido/', views.finalizar_pedido, name='finalizar_pedido'),
     path('deletar-item/<int:item_id>/', views.deletar_pedido, name='deletar_pedido'),
     path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
 ]
 
