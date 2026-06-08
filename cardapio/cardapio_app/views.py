@@ -1,8 +1,105 @@
-from django.shortcuts import render, get_object_or_404, redirect,render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import AlimentoCardapio, Categoria, Cliente, Pedido, ItemPedidos
 from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from groq import Groq
+from django.conf import settings
+from django.core.cache import cache
+
+client = Groq(api_key=settings.GROQ_API_KEY)
+
+@login_required
+@require_POST
+def chat_view(request):
+     
+    #limitar o tamanho da frase
+    msg = request.POST.get("message", "").strip()
+
+    if not msg:
+        return JsonResponse({"message": "Mensagem vazia"})
+
+    if len(msg) > 300:
+        return JsonResponse({"message": "Mensagem muito longa"}, status=400)
+    
+    #palavras proibidas
+    blocked = ["senha", "hack", "exploit"]
+
+    if any(word in msg.lower() for word in blocked):
+        return JsonResponse({"message": "Não posso responder isso."})
+    
+    #LIMITE DE USUARIO POR ID
+    cache_key = f"chat_limit_{request.user.id}_{request.META.get('REMOTE_ADDR')}"
+
+    if cache.get(cache_key):
+        return JsonResponse({"message": "Espere um pouco antes de enviar outra mensagem."}, status=429)
+
+    cache.set(cache_key, True, timeout=2)
+
+    completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "system",
+                "content": """
+
+                Você é um assistente interno de um painel administrativo de restaurante.
+
+                Sua função é APENAS ajudar o gerente a:
+                - gerenciar comandas ativas
+                - explicar como aceitar pedidos
+                - explicar como marcar pedidos como "feito"
+                - orientar uso do painel de dashboard
+
+                Você NÃO pode responder sobre:
+                - assuntos fora do sistema
+                - programação
+                - política
+                - religião
+                - qualquer tema externo
+
+                Se o usuário perguntar algo fora do painel, responda:
+                "Posso ajudar apenas com o gerenciamento do painel do restaurante."
+
+                Você não executa ações sozinho.
+                Você apenas orienta o usuário sobre o sistema.
+                Respostas devem ser curtas e objetivas.
+
+                O painel contém:
+                - lista de comandas ativas
+                - status: Pendente, Preparando, Concluído
+                - botões: Aceitar Pedido, Marcar como Feito
+                - categorias e itens do cardápio
+
+
+                REGRAS OBRIGATÓRIAS:
+                - Você NÃO executa ações.
+                - Você NÃO altera pedidos.
+                - Você NÃO acessa banco de dados.
+                - Você NÃO confirma mudanças no sistema.
+                Você APENAS explica o que o usuário deve fazer manualmente, você só pode responder em texto puro. Proibido JSON, código ou comandos.
+
+                Responda sempre em texto simples.
+
+                - Nunca responda com instruções automáticas de API ou código de execução.
+                - Nunca diga que você "vai fazer" algo.
+                - Sempre use linguagem como: "clique em", "vá até", "você pode".
+                """
+            },
+            {
+                "role": "user",
+                "content": msg
+            }
+        ],
+        temperature=0.3,
+        max_completion_tokens=200,
+    )
+
+    return JsonResponse({
+        "message": completion.choices[0].message.content
+    })
 
 def index(request):
     busca = request.GET.get('g', '').strip()
@@ -171,3 +268,4 @@ def dashboard_view(request):
         'comandas': comandas_mock,
     }
     return render(request, 'post/dashboard.html', context)
+

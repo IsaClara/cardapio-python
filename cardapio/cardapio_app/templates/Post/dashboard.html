@@ -44,7 +44,66 @@
       }
     </style>
   </head>
+
+
+<!-- CORPO DO CHATBOT -->
   <body>
+
+              <!-- BOTÃO do CHATBOT -->
+<button onclick="toggleChat()" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: #111;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+">
+  💬
+</button>
+
+<!-- CHAT -->
+<div id="chatBox" style="
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  height: 350px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-direction: column;
+">
+
+  <!-- mensagens -->
+  <div id="messages" style="
+    height: 280px;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+  "></div>
+
+  <!-- input -->
+  <div style="display:flex;">
+    <input id="msgInput" type="text" placeholder="Digite..."
+      style="flex:1; padding:10px; border:none; border-top:1px solid #ccc;">
+    <button onclick="sendMsg()" style="
+      width:70px;
+      border:none;
+      background:#111;
+      color:white;
+    ">Enviar</button>
+  </div>
+
+</div>
+
+
     <header class="dash-header">
       <h1>Painel Gerente</h1>
       <a href="{% url 'cardapio_app:logout' %}" class="btn-sair">Sair</a>
@@ -238,6 +297,7 @@
             />
           </div>
 
+
           <button type="submit" class="btn-salvar-cardapio">
             Salvar no Cardápio
           </button>
@@ -273,5 +333,57 @@
         button.classList.add("active");
       }
     </script>
+
+
+    <script>
+function toggleChat() {
+  const box = document.getElementById("chatBox");
+  box.style.display = box.style.display === "flex" ? "none" : "flex";
+}
+
+function sendMsg() {
+  const input = document.getElementById("msgInput");
+  const msg = input.value;
+  if (!msg) return;
+
+  const messages = document.getElementById("messages");
+
+  // mostra mensagem do usuário
+  messages.innerHTML += "<div><b>Você:</b> " + msg + "</div>";
+
+  fetch("/cardapio/chat/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-CSRFToken": getCookie("csrftoken"),
+    },
+    body: "message=" + encodeURIComponent(msg)
+  })
+  .then(res => res.json())
+  .then(data => {
+    messages.innerHTML += "<div><b>IA:</b> " + data.message + "</div>";
+    messages.scrollTop = messages.scrollHeight;
+  });
+
+  input.value = "";
+}
+
+// CSRF helper (Django)
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+
   </body>
 </html>
