@@ -134,3 +134,5 @@ LOGOUT_REDIRECT_URL = '/cardapio/login/'
 
 load_dotenv(BASE_DIR / ".env")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+os.environ.pop("SSL_CERT_FILE", None)
