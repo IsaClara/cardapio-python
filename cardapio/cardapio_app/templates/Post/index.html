@@ -62,7 +62,7 @@
                       <input type="hidden" name="alimento_id" value="{{ alimento.id }}">
                       <input type="hidden" name="nome_cliente">
 
-                      <button type="submit" class="btn_adicionar">+</button>
+                      <button type="submit" id = 'adc_pedido' class="btn_adicionar">+</button>
               </form>
               {% else %}
               <p style="color: red">Indisponível</p>
@@ -139,11 +139,11 @@
 
         <div class="form-group">
           <label>Seu Nome</label>
-          <input type="text" name="nome_cliente" required>
+          <input type="text" id="seu_nome" name="nome_cliente" required>
         </div>
 
         <div class="modal-footer">
-          <button type="submit" class="btn-enviar-pedido">
+          <button type="submit" id ="btn_enviarpedido" class="btn-enviar-pedido">
             Enviar pedido
           </button>
 
@@ -166,7 +166,7 @@
     >
       <input type="hidden" name="g" value="{{ busca_atual }}" />
       <input type="hidden" name="ver_carrinho" value="sim" />
-      <button type="submit" class="btn_pedido">Meus Pedidos</button>
+      <button type="submit" id="meuPedido" class="btn_pedido">Meus Pedidos</button>
     </form>
     {% endif %}
 
