@@ -1,4 +1,5 @@
 {% load static %}
+{% load qrcode_tags %}
 <!doctype html>
 <html lang="pt-br">
   <head>
@@ -241,6 +242,16 @@
         >
           Abrir Visão do Cliente
         </a>
+        <div class="qr-code-container" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 20px;">
+          <h2 class="titulo-sessao" style="align-self: flex-start; text-align: left;">QR Code para a visão do cliente</h2>
+          <div style="background: white; padding: 10px; border-radius: 8px; margin: 15px 0;">
+              <img src="{% generate_qr_code 'cardapio_app:index' %}" alt="QR Code" width="180">
+          </div>          
+          <a href="{% generate_qr_code 'cardapio_app:index' %}" download="qrcode-cardapio.png" class="link-preview" style="display: block; width: 100%; box-sizing: border-box; text-align: center; margin-top: 15px; padding: 12px 20px;">
+          Baixar QR Code para Imprimir
+          </a>
+        </div>
+
       </div>
     </main>
 
