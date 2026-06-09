@@ -6,103 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Painel de Controle</title>
     <link rel="stylesheet" href="{% static 'css/admin_styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}" />
+    
     <style>
-      /* Abas de Navegação Estilo Mobile */
-      .tab-bar {
-        display: flex;
-        background: var(--bg_primary);
-        margin: 0 16px 16px 16px;
-        border-radius: 13px;
-        padding: 4px;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
-      }
-      .tab-btn {
-        flex: 1;
-        padding: 12px;
-        border: none;
-        background: none;
-        font-family: "Montserrat", sans-serif;
-        font-weight: bold;
-        font-size: 0.9rem;
-        color: var(--text-secondary);
-        cursor: pointer;
-        border-radius: 10px;
-        text-align: center;
-      }
-      .tab-btn.active {
-        background-color: var(--accent-color);
-        color: var(--accent-color-text);
-      }
+      
 
-      /* Conteúdo das Abas */
-      .tab-content {
-        display: none;
-        padding: 0 16px;
-      }
-      .tab-content.active {
-        display: block;
-      }
     </style>
   </head>
 
-
-<!-- CORPO DO CHATBOT -->
   <body>
+    <button class="btn-chatbot-flutuante" onclick="toggleChat()">💬</button>
 
-              <!-- BOTÃO do CHATBOT -->
-<button onclick="toggleChat()" style="
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: none;
-  background: #111;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-">
-  💬
-</button>
+    <div id="chatBox" class="janela-chatbot">
+      <div class="chat-cabecalho">
+        <span>Assistente Virtual</span>
+      </div>
 
-<!-- CHAT -->
-<div id="chatBox" style="
-  display: none;
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  width: 300px;
-  height: 350px;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  overflow: hidden;
-  flex-direction: column;
-">
+      <!-- Área de Mensagens -->
+      <div id="messages" class="chat-mensagens-container">
+        <div class="balao-msg ia">Olá! Como posso te ajudar com o painel de controle hoje?</div>
+      </div>
 
-  <!-- mensagens -->
-  <div id="messages" style="
-    height: 280px;
-    padding: 10px;
-    overflow-y: auto;
-    font-size: 14px;
-  "></div>
-
-  <!-- input -->
-  <div style="display:flex;">
-    <input id="msgInput" type="text" placeholder="Digite..."
-      style="flex:1; padding:10px; border:none; border-top:1px solid #ccc;">
-    <button onclick="sendMsg()" style="
-      width:70px;
-      border:none;
-      background:#111;
-      color:white;
-    ">Enviar</button>
-  </div>
-
-</div>
-
+      <!-- Barra de Digitação -->
+      <div class="chat-rodape-input">
+        <!-- Adicionado evento para enviar também pressionando ENTER -->
+        <input 
+          id="msgInput" 
+          type="text" 
+          placeholder="Digite sua dúvida..." 
+          onkeypress="if(event.key === 'Enter') sendMsg()" 
+        />
+        <button onclick="sendMsg()">Enviar</button>
+      </div>
+    </div>
 
     <header class="dash-header">
       <h1>Painel Gerente</h1>
@@ -110,9 +46,8 @@
     </header>
 
     <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('comandas', this)">
-        Pedidos
-      </button>
+      <button class="tab-btn" onclick="switchTab('comandas', this)">Pedidos</button>
+
       <button class="tab-btn" onclick="switchTab('cardapio', this)">
         Editar Itens
       </button>
@@ -122,187 +57,174 @@
     </div>
 
     <main class="dashboard-container">
-      <div id="comandas" class="tab-content active">
+      <div id="comandas" class="tab-content">
         <h2 class="titulo-sessao">Comandas Ativas</h2>
         <div class="container-dos-cards">
-          {% for comanda in comandas %}
+          {% for pedido in pedidos %}
           <div class="comanda-card">
             <div class="comanda-meta">
-              <strong>#{{ comanda.id }} - {{ comanda.cliente }}</strong>
-              <span class="badge-status">{{ comanda.status }}</span>
+              <strong
+                >#{{ pedido.id }} - {{ pedido.cliente.nome_cliente }}</strong
+              >
+              <span class="badge-status">{{ pedido.status }}</span>
             </div>
-
-            <p class="comanda-itens-texto">{{ comanda.itens }}</p>
+            <p class="comanda-itens-texto">{% for item in pedido.Itens.all %}{{ item.quantidade }}x {{item.alimento.nome_alimento }}{% if not forloop.last %}, {% endif%}{% endfor %}
+            </p>
 
             <div class="comanda-rodape">
               <span class="comanda-total-texto"
-                >Total: R$ {{ comanda.total }}</span
+                >Total: R$ {{ pedido.total }}</span
               >
+
               <div class="comanda-acoes">
-                {% if comanda.status == 'Pendente' %}
-                <button class="btn-status btn-preparar">Aceitar Pedido</button>
-                {% elif comanda.status == 'Preparando' %}
-                <button class="btn-status btn-concluir">
-                  ✓ Marcar como Feito
-                </button>
-                {% endif %}
+                <form
+                  method="POST"
+                  action="{% url 'cardapio_app:atualizar_status_pedido' pedido.id 'Concluído' %}"
+                >
+                  {% csrf_token %}
+                  <button type="submit" class="btn-status btn-concluir">
+                    ✓ Marcar como Feito
+                  </button>
+                </form>
               </div>
             </div>
           </div>
           {% empty %}
-          <p class="feedback-vazio">Nenhuma comanda recebida no momento.</p>
+          <p class="feedback-vazio">Nenhum pedido recebido no momento.</p>
           {% endfor %}
         </div>
       </div>
 
-      <div id="cardapio" class="tab-content">
-        <h2 class="titulo-sessao">Criar Categoria</h2>
-        <form
-          class="form-admin-bloco"
-          onsubmit="
-            event.preventDefault();
-            alert('Front-end funcionando! A lógica salvará isso depois.');
-          "
-        >
-          <div class="form-group">
-            <label for="nome_cat">Nome da Categoria</label>
-            <input
-              type="text"
-              id="nome_cat"
-              placeholder="Ex: Bebidas, Sobremesas"
-              required
-            />
-          </div>
-          <button type="submit" class="btn-criar-lista">
-            + Nova Categoria
-          </button>
-        </form>
+     <div id="cardapio" class="tab-content">
+    <!-- FORMULÁRIO 1: CRIAR CATEGORIA -->
+    <h2 class="titulo-sessao">Criar Categoria</h2>
+    <form class="form-admin-bloco" method="POST" action="{% url 'cardapio_app:dashboard' %}">
+      {% csrf_token %}
+      <!-- Input oculto para a View saber que este formulário é de Categoria -->
+      <input type="hidden" name="tipo_formulario" value="criar_categoria">
+      
+      <div class="form-group">
+        <label for="nome_cat">Nome da Categoria</label>
+        <input
+          type="text"
+          id="nome_cat"
+          name="nome_categoria"
+          placeholder="Ex: Bebidas, Sobremesas"
+          required
+        />
+      </div>
+      <button type="submit" class="btn-criar-lista">
+        + Nova Categoria
+      </button>
+    </form>
 
-        <div class="gerenciamento-lista-wrapper">
-          <h2 class="titulo-sessao">Categorias e Alimentos Atuais</h2>
+    <!-- LISTAGEM REAL DE CATEGORIAS E ALIMENTOS -->
+    <div class="gerenciamento-lista-wrapper">
+      <h2 class="titulo-sessao">Categorias e Alimentos Atuais</h2>
 
-          <div class="categoria-bloco">
-            <div class="categoria-topo">
-              <span class="categoria-nome">Hambúrgueres</span>
-              <div class="acoes-grupo">
-                <button class="btn-acao btn-deletar-mini">Apagar</button>
-              </div>
-            </div>
-
-            <div class="alimentos-lista">
-              <div class="alimento-linha">
-                <div class="alimento-info">
-                  <span class="alimento-nome">X-Burguer Tradicional</span>
-                  <span class="alimento-descricao"
-                    >Pão brioche, blend 150g e queijo cheddar prato.</span
-                  >
-                  <span class="alimento-preco">R$ 24,90</span>
-                </div>
-                <div class="acoes-grupo">
-                  <button class="btn-acao btn-editar-mini">Editar</button>
-                  <button class="btn-acao btn-deletar-mini">Apagar</button>
-                </div>
-              </div>
-
-              <div class="alimento-linha">
-                <div class="alimento-info">
-                  <span class="alimento-nome">Combo Smash Duplo</span>
-                  <span class="alimento-descricao"
-                    >2 blends smash 80g, muito queijo e fritas inclusa.</span
-                  >
-                  <span class="alimento-preco">R$ 38,00</span>
-                </div>
-                <div class="acoes-grupo">
-                  <button class="btn-acao btn-editar-mini">Editar</button>
-                  <button class="btn-acao btn-deletar-mini">Apagar</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="categoria-bloco">
-            <div class="categoria-topo">
-              <span class="categoria-nome">Bebidas</span>
-              <div class="acoes-grupo">
-                <button class="btn-acao btn-deletar-mini">Apagar</button>
-              </div>
-            </div>
-
-            <div class="alimentos-lista">
-              <div class="alimento-linha">
-                <div class="alimento-info">
-                  <span class="alimento-nome">Coca-Cola Lata</span>
-                  <span class="alimento-descricao"
-                    >Lata de 350ml trincando de gelada.</span
-                  >
-                  <span class="alimento-preco">R$ 6,00</span>
-                </div>
-                <div class="acoes-grupo">
-                  <button class="btn-acao btn-editar-mini">Editar</button>
-                  <button class="btn-acao btn-deletar-mini">Apagar</button>
-                </div>
-              </div>
-            </div>
+      {% for categoria in categorias %}
+      <div class="categoria-bloco">
+        <div class="categoria-topo">
+          <span class="categoria-nome">{{ categoria.nome }}</span>
+          <div class="acoes-grupo">
+            <!-- Botão para Apagar Categoria -->
+            <form method="POST" action="{% url 'cardapio_app:deletar_categoria' categoria.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn-acao btn-deletar-mini" onclick="return confirm('Deseja mesmo apagar esta categoria e todos os alimentos dela?');">Apagar</button>
+            </form>
           </div>
         </div>
 
-        <h2 class="titulo-sessao">Adicionar Comida</h2>
-        <form
-          class="form-admin-bloco"
-          onsubmit="
-            event.preventDefault();
-            alert('Item enviado (Simulação)!');
-          "
-        >
-          <div class="form-group">
-            <label for="id_cat_select">Selecione a Categoria</label>
-            <select id="id_cat_select">
-              {% for item in categorias %}
-              <option value="{{ item.id }}">{{ item.nome }}</option>
-              {% empty %}
-              <option value="">Hambúrgueres</option>
-              <option value="">Bebidas</option>
-              {% endfor %}
-            </select>
+        <div class="alimentos-lista">
+          <!-- Busca os alimentos reais associados a esta categoria pelo related_name='Alimentos' -->
+          {% for alimento in categoria.Alimentos.all %}
+          <div class="alimento-linha">
+            <div class="alimento-info">
+              <span class="alimento-nome">{{ alimento.nome_alimento }}</span>
+              <span class="alimento-descricao">{{ alimento.descricao }}</span>
+              <span class="alimento-preco">R$ {{ alimento.preco }}</span>
+            </div>
+            <div class="acoes-grupo">
+              <!-- Botão para Apagar Alimento -->
+              <form method="POST" action="{% url 'cardapio_app:deletar_alimento' alimento.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-acao btn-deletar-mini" onclick="return confirm('Deseja apagar este alimento?');">Apagar</button>
+              </form>
+            </div>
           </div>
-
-          <div class="form-group">
-            <label for="nome_comida">Nome do Alimento</label>
-            <input
-              type="text"
-              id="nome_comida"
-              placeholder="Ex: Batata Frita Turbinada"
-              required
-            />
+          {% empty %}
+          <div class="alimento-linha">
+            <span class="alimento-descricao" style="color: gray; font-style: italic;">Nenhum alimento cadastrado nesta categoria.</span>
           </div>
-
-          <div class="form-group">
-            <label for="desc_comida">Descrição</label>
-            <textarea
-              id="desc_comida"
-              rows="3"
-              placeholder="Ex: Acompanha cheddar cremoso e pedacinhos de bacon crocante por cima."
-              required
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="preco_comida">Preço (R$)</label>
-            <input
-              type="number"
-              step="0.01"
-              id="preco_comida"
-              placeholder="0.00"
-              required
-            />
-          </div>
-
-
-          <button type="submit" class="btn-salvar-cardapio">
-            Salvar no Cardápio
-          </button>
-        </form>
+          {% endfor %}
+        </div>
       </div>
+      {% empty %}
+      <p class="feedback-vazio">Nenhuma categoria cadastrada ainda.</p>
+      {% endfor %}
+    </div>
+
+    <!-- FORMULÁRIO 2: ADICIONAR COMIDA -->
+    <h2 class="titulo-sessao">Adicionar Comida</h2>
+    <form class="form-admin-bloco" method="POST" enctype="multipart/form-data" action="{% url 'cardapio_app:dashboard' %}">
+      {% csrf_token %}
+      <input type="hidden" name="tipo_formulario" value="criar_alimento">
+
+      <div class="form-group">
+        <label for="id_cat_select">Selecione a Categoria</label>
+        <select id="id_cat_select" name="categoria_id" required>
+          <option value="">-- Escolha uma Categoria --</option>
+          {% for item in categorias %}
+          <option value="{{ item.id }}">{{ item.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="nome_comida">Nome do Alimento</label>
+        <input
+          type="text"
+          id="nome_comida"
+          name="nome_alimento"
+          placeholder="Ex: Batata Frita Turbinada"
+          required
+        />
+      </div>
+
+       <div class="form-group">
+        <label for="foto_comida">Foto do Alimento</label>
+        <input type="file" id="foto_comida" name="foto_alimento" accept="image/*" />
+      </div>
+
+      <div class="form-group">
+        <label for="desc_comida">Descrição</label>
+        <textarea
+          id="desc_comida"
+          name="descricao"
+          rows="3"
+          placeholder="Ex: Acompanha cheddar cremoso e pedacinhos de bacon crocante por cima."
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="preco_comida">Preço (R$)</label>
+        <input
+          type="number"
+          step="0.01"
+          id="preco_comida"
+          name="preco"
+          placeholder="0.00"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn-salvar-cardapio">
+        Salvar no Cardápio
+      </button>
+    </form>
+  </div>
+
 
       <div id="config" class="tab-content">
         <h2 class="titulo-sessao">Seu Link do Cardápio</h2>
@@ -322,68 +244,99 @@
     </main>
 
     <script>
-      function switchTab(tabId, button) {
-        const contents = document.querySelectorAll(".tab-content");
-        contents.forEach((content) => content.classList.remove("active"));
+    function switchTab(tabId, button) {
+      const contents = document.querySelectorAll(".tab-content");
+      contents.forEach((content) => content.classList.remove("active"));
 
-        const buttons = document.querySelectorAll(".tab-btn");
-        buttons.forEach((btn) => btn.classList.remove("active"));
+      const buttons = document.querySelectorAll(".tab-btn");
+      buttons.forEach((btn) => btn.classList.remove("active"));
 
-        document.getElementById(tabId).classList.add("active");
-        button.classList.add("active");
+      document.getElementById(tabId).classList.add("active");
+      button.classList.add("active");
+
+      // Salva a aba atual para que o F5 comum saiba exatamente onde você parou
+      localStorage.setItem("dashboard_aba_atual", tabId);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const acabouDeSalvarOuApagar = urlParams.get('salvo') === 'sim';
+
+      let abaSalva = localStorage.getItem("dashboard_aba_atual");
+
+      let abaParaAbrir = "comandas";
+
+      if (acabouDeSalvarOuApagar) {
+        abaParaAbrir = "cardapio";
+        
+        urlParams.delete('salvo');
+        const novaUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+        window.history.replaceState({}, document.title, novaUrl);
+      } else if (abaSalva) {
+        abaParaAbrir = abaSalva;
       }
+
+      const botao = Array.from(document.querySelectorAll(".tab-btn")).find(btn => 
+        btn.getAttribute("onclick").includes(abaParaAbrir)
+      );
+    
+      if (botao) {
+        switchTab(abaParaAbrir, botao);
+      }
+    });
     </script>
 
-
     <script>
-function toggleChat() {
-  const box = document.getElementById("chatBox");
-  box.style.display = box.style.display === "flex" ? "none" : "flex";
-}
-
-function sendMsg() {
-  const input = document.getElementById("msgInput");
-  const msg = input.value;
-  if (!msg) return;
-
-  const messages = document.getElementById("messages");
-
-  // mostra mensagem do usuário
-  messages.innerHTML += "<div><b>Você:</b> " + msg + "</div>";
-
-  fetch("/cardapio/chat/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "X-CSRFToken": getCookie("csrftoken"),
-    },
-    body: "message=" + encodeURIComponent(msg)
-  })
-  .then(res => res.json())
-  .then(data => {
-    messages.innerHTML += "<div><b>IA:</b> " + data.message + "</div>";
-    messages.scrollTop = messages.scrollHeight;
-  });
-
-  input.value = "";
-}
-
-// CSRF helper (Django)
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
+      function toggleChat() {
+        const box = document.getElementById("chatBox");
+        box.style.display = box.style.display === "flex" ? "none" : "flex";
       }
-    }
-  }
-  return cookieValue;
-}
-</script>
 
+      function sendMsg() {
+        const input = document.getElementById("msgInput");
+        const msg = input.value;
+        if (!msg) return;
+
+        const messages = document.getElementById("messages");
+
+        // mostra mensagem do usuário
+        messages.innerHTML += "<div class='balao-msg usuario'>" + msg + "</div>";
+
+        messages.scrollTop = messages.scrollHeight;
+
+        fetch("/cardapio/chat/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: "message=" + encodeURIComponent(msg),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            messages.innerHTML += "<div class='balao-msg ia'><b>IA:</b> " + data.message + "</div>";
+            messages.scrollTop = messages.scrollHeight;
+          });
+
+        input.value = "";
+      }
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1),
+              );
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    </script>
   </body>
 </html>

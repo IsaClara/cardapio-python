@@ -1,0 +1,139 @@
+  /* Botão Flutuante Redondo */
+.btn-chatbot-flutuante {
+position: fixed;
+bottom: 20px;
+right: 20px;
+width: 55px;
+height: 55px;
+border-radius: 50%;
+border: none;
+background: #111111;
+color: white;
+font-size: 24px;
+cursor: pointer;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+display: flex;
+align-items: center;
+justify-content: center;
+transition: transform 0.2s ease, background-color 0.2s ease;
+z-index: 9999;
+}
+.btn-chatbot-flutuante:hover {
+transform: scale(1.05);
+background: #222222;
+}
+.btn-chatbot-flutuante:active {
+transform: scale(0.95);
+}
+
+/* Janela Principal do Chat */
+.janela-chatbot {
+display: none; /* Controlado como 'flex' via JavaScript */
+position: fixed;
+bottom: 85px;
+right: 20px;
+width: 320px;
+height: 420px;
+background: #ffffff;
+border-radius: 14px;
+box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+overflow: hidden;
+flex-direction: column;
+border: 1px solid #eeeeee;
+font-family: "Montserrat", sans-serif;
+z-index: 9999;
+}
+
+/* Topo / Cabeçalho do Chat */
+.chat-cabecalho {
+background: #111111;
+color: white;
+padding: 14px;
+font-weight: bold;
+font-size: 0.95rem;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.chat-cabecalho::before {
+content: "";
+width: 8px;
+height: 8px;
+background: #2ec4b6; /* Bolinha verde online */
+border-radius: 50%;
+display: inline-block;
+}
+
+/* Caixa de Rolagem das Mensagens */
+.chat-mensagens-container {
+flex: 1;
+padding: 14px;
+overflow-y: auto;
+background-color: #f9f9f9;
+display: flex;
+flex-direction: column;
+gap: 10px;
+scroll-behavior: smooth;
+}
+
+/* Estilo Base dos Balões de Chat */
+.balao-msg {
+max-width: 80%;
+padding: 9px 13px;
+border-radius: 14px;
+font-size: 0.88rem;
+line-height: 1.4;
+word-wrap: break-word;
+}
+
+/* Balão do Dono do Painel (Sua mensagem à direita) */
+.balao-msg.usuario {
+background: #111111;
+color: white;
+align-self: flex-end;
+border-bottom-right-radius: 4px;
+}
+
+/* Balão da Inteligência Artificial (À esquerda) */
+.balao-msg.ia {
+background: #ffffff;
+color: #333333;
+align-self: flex-start;
+border-bottom-left-radius: 4px;
+border: 1px solid #e2e2e2;
+}
+
+/* Rodapé / Input e Botão */
+.chat-rodape-input {
+display: flex;
+padding: 10px;
+background: #ffffff;
+border-top: 1px solid #eeeeee;
+gap: 6px;
+}
+.chat-rodape-input input {
+flex: 1;
+padding: 8px 12px;
+border: 1px solid #cccccc;
+border-radius: 20px;
+outline: none;
+font-size: 0.9rem;
+font-family: "Montserrat", sans-serif;
+}
+.chat-rodape-input input:focus {
+    border-color: #111111;
+}
+.chat-rodape-input button {
+    border: none;
+    background: #111111;
+    color: white;
+    padding: 0 14px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.chat-rodape-input button:hover {
+    background: #333333;
+}

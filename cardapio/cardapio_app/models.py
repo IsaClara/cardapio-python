@@ -21,13 +21,12 @@ class AlimentoCardapio(models.Model):
     foto_alimento = models.ImageField('foto', upload_to='fotoalimento/', blank=True, null=True)
     preco = models.DecimalField('Preço', max_digits=5, decimal_places=2,default=0)
     disponivel= models.BooleanField('Disponivel', default=True)
-    disponivel_estoque = models.PositiveIntegerField('Estoque disponivel:', default=0)
 
     #relacionamentos
 
     categoria = models.ForeignKey(
         Categoria,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='Alimentos',
         verbose_name='Categoria',
     )
@@ -53,14 +52,35 @@ class Cliente(models.Model):
         return self.nome_cliente
     
 class Pedido(models.Model):
+    # Opções de status para a comanda
+    STATUS_CHOICES = [
+        ('Pendente', 'Pendente'),
+        ('Preparando', 'Preparando'),
+        ('Concluído', 'Concluído'),
+    ]
+
     cliente = models.ForeignKey(
     Cliente,
     on_delete=models.CASCADE,
     related_name='Pedidos')
+
     criado_em = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20, 
+        choices=STATUS_CHOICES, 
+        default='Pendente',
+        verbose_name='Status do Pedido'
+    )
+    class Meta:
+        verbose_name = 'Pedido'
+        verbose_name_plural = 'Pedidos'
+        ordering = ['-criado_em']
 
     def __str__(self):
         return f'{self.cliente} - {self.criado_em}'
+    
+    def total(self):
+        return sum(item.quantidade * item.preco_unitario for item in self.Itens.all())
     
 
 class ItemPedidos(models.Model):
@@ -68,18 +88,21 @@ class ItemPedidos(models.Model):
         Pedido,
         on_delete=models.CASCADE,
         related_name='Itens')
+    
     alimento = models.ForeignKey(
         AlimentoCardapio,
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
+
     quantidade = models.PositiveIntegerField(
         default=1)
     
     preco_unitario = models.DecimalField(
         max_digits=5, decimal_places=2
     )
+    class Meta:
+        verbose_name = 'Item do Pedido'
+        verbose_name_plural = 'Itens do Pedido'
 
     def __str__(self):
-        # Corrigido aqui para não quebrar o painel admin
         return f'{self.pedido.id} - {self.alimento.nome_alimento}' 
-# Create your models here.

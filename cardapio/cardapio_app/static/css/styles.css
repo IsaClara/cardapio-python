@@ -88,16 +88,15 @@ h2 {
   overflow-x: auto;
   padding: 8px 4px;
   margin-bottom: 1rem;
-
+  scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  
+  /* NOVO: Faz o carrossel rolar suavemente de volta para o início */
+  scroll-behavior: smooth; 
 }
 
 .carrossel-categorias::-webkit-scrollbar {
   display: none;
-}
-
-.carrossel-categorias {
-  scrollbar-width: none;
 }
 
 .pila-link {
@@ -112,23 +111,51 @@ h2 {
   font-weight: 700;
   border-radius: 25px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.06);
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.1s ease;
+  
+  /* AJUSTADO: Mudado para 'all' para animar a troca de lugar e a escala */
+  transition: all 0.25s ease;
   -webkit-tap-highlight-color: transparent;
-
   flex-shrink: 0;
+
+  /* NOVO: Por padrão, todos os botões normais ficam na posição 2 */
+  order: 2; 
+}
+
+/* NOVO: Força o botão "Todos" a ir para a posição 2 quando outra categoria estiver ativa */
+.carrossel-categorias a:first-child {
+  order: 2;
 }
 
 .pila-link.active {
   background-color: var(--accent-color);
   color: var(--accent-color-text);
   box-shadow: 0px 4px 10px rgba(242, 92, 5, 0.25);
+
+  /* NOVO: Joga o botão ativo para o primeiríssimo lugar (antes do Todos) */
+  order: 1 !important; 
+  
+  /* NOVO: Dá um leve destaque crescendo o botão ativo de forma elegante */
+  transform: scale(1.04); 
 }
 
-.pila-link:active {
-  transform: scale(0.95);
+.pila-link.active {
+  background-color: var(--accent-color);
+  color: var(--accent-color-text);
+  box-shadow: 0px 4px 10px rgba(242, 92, 5, 0.25);
+  order: 1 !important;
+  
+  animation: destacarBotao 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes destacarBotao {
+  from {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1.04);
+    opacity: 1;
+  }
 }
 
 ul {
@@ -154,7 +181,7 @@ li {
   gap: 16px;
 }
 
-li img {
+.comida_imagem {
   width: 151px;
   height: 180px;
   object-fit: cover;

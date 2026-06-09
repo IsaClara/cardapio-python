@@ -24,17 +24,17 @@ class CategoriaAdmin(admin.ModelAdmin):
 
 @admin.register(AlimentoCardapio)
 class AlimentoCardapioAdmin(admin.ModelAdmin):
-    list_display=('nome_alimento','descricao','preco','foto_alimento','disponivel','disponivel_estoque',)
+    list_display=('nome_alimento','descricao','preco','foto_alimento','disponivel',)
     search_fields=('nome_alimento','preco','categoria',)
     list_display_links=('descricao',)
-    list_editable=('nome_alimento','preco','foto_alimento','disponivel','disponivel_estoque',)
+    list_editable=('nome_alimento','preco','foto_alimento','disponivel',)
     autocomplete_fields=('categoria',)
     fieldsets= (
         ('Informações principais:', {
             'fields': ('nome_alimento','descricao','foto_alimento',)
         }),
         ('Detalhes:', {
-            'fields': ('preco','disponivel','disponivel_estoque',)
+            'fields': ('preco','disponivel',)
         }),
         ('Relacionamentos:', {
             'fields': ('categoria',)

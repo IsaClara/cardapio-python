@@ -15,7 +15,12 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('chat/', views.chat_view, name='chat')
+    path('chat/', views.chat_view, name='chat'),
+    path('pedido/<int:pedido_id>/status/<str:novo_status>/', views.atualizar_status_pedido, name='atualizar_status_pedido'),
+    path('painel/gerenciar-cardapio/', views.gerenciar_cardapio_view, name='gerenciar_cardapio'),
+    path('painel/deletar-categoria/<int:categoria_id>/', views.deletar_categoria_view, name='deletar_categoria'),
+    path('painel/deletar-alimento/<int:alimento_id>/', views.deletar_alimento_view, name='deletar_alimento'),
+
 ]
 
 if settings.DEBUG:

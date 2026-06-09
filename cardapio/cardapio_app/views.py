@@ -8,6 +8,8 @@ from django.views.decorators.http import require_POST
 from groq import Groq
 from django.conf import settings
 from django.core.cache import cache
+from .forms import CategoriaForm, AlimentoForm
+
 
 client = Groq(api_key=settings.GROQ_API_KEY)
 
@@ -136,6 +138,7 @@ def index(request):
         'busca_atual': busca,
         'abrir_modal_pedidos': abrir_modal_pedidos,
         'itens_pedido': itens_pedido,
+
     })
 
 
@@ -145,32 +148,27 @@ def criar_pedido(request):
         return redirect('cardapio_app:index')
 
     alimento_id = request.POST.get('alimento_id')
-    nome_cliente = request.POST.get('nome_cliente', 'Visitante')
     quantidade = int(request.POST.get('quantidade', 1))
-
     alimento = get_object_or_404(AlimentoCardapio, id=alimento_id)
 
-    # cliente
-    cliente, _ = Cliente.objects.get_or_create(nome_cliente=nome_cliente)
+    cliente_id = request.session.get('cliente_id')
+    if cliente_id:
+        try:
+            cliente = Cliente.objects.get(id=cliente_id)
+        except Cliente.DoesNotExist:
+            cliente = Cliente.objects.create(nome_cliente='Mesa/Visitante')
+    else:
+        cliente = Cliente.objects.create(nome_cliente='Mesa/Visitante')
+        request.session['cliente_id'] = cliente.id
 
-    # salva cliente na sessão
-    request.session['cliente_id'] = cliente.id
+    # O status 'Carrinho' significa que o cliente ainda está escolhendo os itens
+    pedido, _ = Pedido.objects.get_or_create(cliente=cliente, status='Carrinho')
 
-    # pega último pedido ou cria um
-    pedido = Pedido.objects.filter(cliente=cliente).last()
-
-    if not pedido:
-        pedido = Pedido.objects.create(cliente=cliente)
-
-    # cria item e quando clica no mesmo de novo, a quantidade é somada
     item, created = ItemPedidos.objects.get_or_create(
-    pedido=pedido,
-    alimento=alimento,
-    defaults={
-        'quantidade': quantidade,
-        'preco_unitario': alimento.preco
-    }
-)
+        pedido=pedido,
+        alimento=alimento,
+        defaults={'quantidade': quantidade, 'preco_unitario': alimento.preco}
+    )
 
     if not created:
         item.quantidade += quantidade
@@ -187,15 +185,17 @@ def finalizar_pedido(request):
     nome_cliente = request.POST.get('nome_cliente', '').strip()
 
     if cliente_id and nome_cliente:
-        cliente = Cliente.objects.get(id=cliente_id)
-        cliente.nome_cliente = nome_cliente  # atualiza com o nome digitado
-        cliente.save()
+        try:
+            cliente = Cliente.objects.get(id=cliente_id)
+            cliente.nome_cliente = nome_cliente  # Atualiza o nome do cliente
+            cliente.save()
 
-        # opcional: marcar pedido como finalizado
-        Pedido.objects.filter(cliente=cliente).update()
-
-        # limpa sessão
-        request.session.pop('cliente_id', None)
+            Pedido.objects.filter(cliente=cliente, status='Carrinho').update(status='Pendente')
+            
+            request.session.pop('cliente_id', None)
+            
+        except Cliente.DoesNotExist:
+            pass
 
     return redirect('cardapio_app:index')
 
@@ -235,37 +235,100 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     print("USER:", request.user)
-    print("AUTH:", request.user.is_authenticated)
 
-    categorias = Categoria.objects.all()
-    # Dados fictícios para testar o front-end do painel do usuário
-    categorias_mock = [
-        {'id': 1, 'nome': 'Hambúrgueres', 'quantidade': 5},
-        {'id': 2, 'nome': 'Bebidas', 'quantidade': 3},
-        {'id': 3, 'nome': 'Pizzas', 'quantidade': 4},
-    ]
-    
-    comandas_mock = [
-        {
-            'id': 101,
-            'cliente': 'João Silva',
-            'itens': '1x Pizza Brigadeiro, 1x Coca-Cola',
-            'total': '27,00',
-            'status': 'Pendente'
-        },
-        {
-            'id': 102,
-            'cliente': 'Maria Souza',
-            'itens': '2x X-Burguer, 1x Batata Frita',
-            'total': '54,00',
-            'status': 'Preparando'
-        }
-    ]
-    
+    if request.method == 'POST':
+        tipo_formulario = request.POST.get('tipo_formulario')
+
+        if tipo_formulario == 'criar_categoria':
+            nome_categoria = request.POST.get('nome_categoria', '').strip()
+            if nome_categoria:
+                Categoria.objects.get_or_create(nome=nome_categoria)
+            return redirect('/cardapio/dashboard/?salvo=sim')
+
+        elif tipo_formulario == 'criar_alimento':
+            categoria_id = request.POST.get('categoria_id')
+            nome_alimento = request.POST.get('nome_alimento', '').strip()
+            descricao = request.POST.get('descricao', '').strip()
+            preco = request.POST.get('preco', 0)
+
+
+            foto_alimento = request.FILES.get('foto_alimento')
+
+            if categoria_id and nome_alimento:
+                categoria = get_object_or_404(Categoria, id=categoria_id)
+                AlimentoCardapio.objects.create(
+                    nome_alimento=nome_alimento,
+                    descricao=descricao,
+                    preco=preco,
+                    categoria=categoria,
+                    foto_alimento=foto_alimento,  
+                    disponivel=True
+                )
+            return redirect('/cardapio/dashboard/?salvo=sim')
+
+    categorias = Categoria.objects.prefetch_related('Alimentos').all()
+    comandas_ativas = Pedido.objects.filter(status='Pendente').prefetch_related('Itens__alimento').order_by('criado_em')
+
     context = {
         'categorias': categorias,
-        'categoria': list(categorias_mock),
-        'comandas': comandas_mock,
+        'pedidos': comandas_ativas,
     }
     return render(request, 'post/dashboard.html', context)
 
+
+@login_required
+def atualizar_status_pedido(request, pedido_id, novo_status):
+    if request.method == "POST":
+        pedido = get_object_or_404(Pedido, id=pedido_id)
+
+        if novo_status == 'Concluído':
+            pedido.delete()
+        else:
+            pedido.status = novo_status
+            pedido.save()
+            
+            
+    return redirect('cardapio_app:dashboard')
+
+@login_required
+def gerenciar_cardapio_view(request):
+    form_categoria = CategoriaForm()
+    form_alimento = AlimentoForm()
+
+    if request.method == 'POST':
+        tipo_form = request.POST.get('tipo_formulario')
+
+        if tipo_form == 'categoria':
+            form_categoria = CategoriaForm(request.POST)
+            if form_categoria.is_valid():
+                form_categoria.save()
+                messages.success(request, 'Nova categoria criada com sucesso!')
+                return redirect('cardapio_app:gerenciar_cardapio')
+
+        elif tipo_form == 'alimento':
+            form_alimento = AlimentoForm(request.POST, request.FILES) # request.FILES é obrigatório para fotos!
+            if form_alimento.is_valid():
+                form_alimento.save()
+                messages.success(request, 'Novo alimento adicionado ao cardápio!')
+                return redirect('cardapio_app:gerenciar_cardapio')
+
+    context = {
+        'form_categoria': form_categoria,
+        'form_alimento': form_alimento,
+    }
+    return render(request, 'post/gerenciar_cardapio.html', context)
+
+
+@login_required
+def deletar_categoria_view(request, categoria_id):
+    if request.method == 'POST':
+        categoria = get_object_or_404(Categoria, id=categoria_id)
+        categoria.delete()
+    return redirect('/cardapio/dashboard/?salvo=sim')
+
+@login_required
+def deletar_alimento_view(request, alimento_id):
+    if request.method == 'POST':
+        alimento = get_object_or_404(AlimentoCardapio, id=alimento_id)
+        alimento.delete()
+    return redirect('/cardapio/dashboard/?salvo=sim')

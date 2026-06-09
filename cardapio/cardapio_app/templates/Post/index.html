@@ -16,7 +16,6 @@
 
     <main>
       <!-- Filtro de Categorias -->
-      <!--NOTA: Acho que seria legal em vez de ser um select ter botões pra deslizar pro lado-->
       <h2>Categoria</h2>
       <div class="carrossel-categorias">
         <a
@@ -41,7 +40,7 @@
         {% for alimento in cardapio %}
         <li>
           {% if alimento.foto_alimento %}
-          <img src="{{ alimento.foto_alimento.url }}" alt="" />
+          <img src="{{ alimento.foto_alimento.url }}" alt="" class='comida_imagem'>
           {% else %}
           <p>sem foto disponível</p>
           {% endif %}
@@ -56,25 +55,17 @@
               <p class="comida_preco">R$ {{ alimento.preco }}</p>
 
               <!-- Botão que envia os dados para abrir o modal -->
-              {% if alimento.disponivel_estoque > 0 %}
+              {% if alimento.disponivel %}
               <form method="POST" action="{% url 'cardapio_app:criar_pedido' %}">
                       {% csrf_token %}
 
                       <input type="hidden" name="alimento_id" value="{{ alimento.id }}">
                       <input type="hidden" name="nome_cliente">
-                      <div class="quantidade-box">
-                          <div class="quantidade-box">
-
-                        <input type="number"
-                              name="quantidade"
-                              min="1"
-                              value="1">
-                        </div>
 
                       <button type="submit" class="btn_adicionar">+</button>
               </form>
               {% else %}
-              <p style="color: red">Não temos mais disponível</p>
+              <p style="color: red">Indisponível</p>
               {% endif %}
             </div>
           </div>
@@ -100,15 +91,14 @@
 
       <div class="modal-item-card">
 
-                <!--Onde fica o delete dos itens -->
+          <!--Onde fica o delete dos itens -->
 
           <form method="POST" action="{% url 'cardapio_app:deletar_pedido' pedido.id %}">
             {% csrf_token %}
           <button type="submit" class="btn-remover-item">✕</button>
           </form>
 
-                  <!-- Lista dos itens no modal -->
-
+          <!-- Lista dos itens no modal -->
           {% if pedido.alimento.foto_alimento %}
               <img src="{{ pedido.alimento.foto_alimento.url }}"
                   class="modal-item-img"
@@ -179,5 +169,25 @@
       <button type="submit" class="btn_pedido">Meus Pedidos</button>
     </form>
     {% endif %}
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const carrossel = document.querySelector(".carrossel-categorias");
+      const botaoAtivo = document.querySelector(".pila-link.active");
+
+      if (carrossel && botaoAtivo) {
+        setTimeout(() => {
+          const esquerdoCarrossel = carrossel.getBoundingClientRect().left;
+          const esquerdoBotao = botaoAtivo.getBoundingClientRect().left;
+          
+          carrossel.scrollBy({
+            left: esquerdoBotao - esquerdoCarrossel - 4,
+            behavior: "smooth"
+          });
+        }, 50);
+      }
+    });
+    </script>
+
   </body>
 </html>
