@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-elt1*g(gs!gv)!!k51lmks+-t9z7*77*n*427eq6q^8ja&x)-7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['cardapio-python.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
