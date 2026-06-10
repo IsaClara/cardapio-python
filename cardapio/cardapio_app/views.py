@@ -273,7 +273,7 @@ def dashboard_view(request):
         'categorias': categorias,
         'pedidos': comandas_ativas,
     }
-    return render(request, 'post/dashboard.html', context)
+    return render(request, 'Post/dashboard.html', context)
 
 
 @login_required
@@ -316,7 +316,7 @@ def gerenciar_cardapio_view(request):
         'form_categoria': form_categoria,
         'form_alimento': form_alimento,
     }
-    return render(request, 'post/gerenciar_cardapio.html', context)
+    return render(request, 'Post/gerenciar_cardapio.html', context)
 
 
 @login_required
