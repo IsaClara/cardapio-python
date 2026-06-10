@@ -99,7 +99,7 @@
      <div id="cardapio" class="tab-content">
     <!-- FORMULÁRIO 1: CRIAR CATEGORIA -->
     <h2 class="titulo-sessao">Criar Categoria</h2>
-    <form class="form-admin-bloco" method="POST" action="{% url 'cardapio_app:gerenciar_cardapio' %}">
+    <form class="form-admin-bloco" method="POST" action="{% url 'cardapio_app:dashboard' %}">
       {% csrf_token %}
       <!-- Input oculto para a View saber que este formulário é de Categoria -->
       <input type="hidden" name="tipo_formulario" value="criar_categoria">
@@ -167,7 +167,7 @@
 
     <!-- FORMULÁRIO 2: ADICIONAR COMIDA -->
     <h2 class="titulo-sessao">Adicionar Comida</h2>
-    <form class="form-admin-bloco" method="POST" enctype="multipart/form-data" action="{% url 'cardapio_app:gerenciar_cardapio' %}">
+    <form class="form-admin-bloco" method="POST" enctype="multipart/form-data" action="{% url 'cardapio_app:dashboard' %}">
       {% csrf_token %}
       <input type="hidden" name="tipo_formulario" value="criar_alimento">
 

@@ -243,7 +243,7 @@ def dashboard_view(request):
             nome_categoria = request.POST.get('nome_categoria', '').strip()
             if nome_categoria:
                 Categoria.objects.get_or_create(nome=nome_categoria)
-            return redirect('cardapio_app:gerenciar_cardapio')
+            return redirect('cardapio_app:dashboard')
 
         elif tipo_formulario == 'criar_alimento':
             categoria_id = request.POST.get('categoria_id')
@@ -289,35 +289,6 @@ def atualizar_status_pedido(request, pedido_id, novo_status):
             
             
     return redirect('cardapio_app:dashboard')
-
-@login_required
-def gerenciar_cardapio_view(request):
-    form_categoria = CategoriaForm()
-    form_alimento = AlimentoForm()
-
-    if request.method == 'POST':
-        tipo_form = request.POST.get('tipo_formulario')
-
-        if tipo_form == 'categoria':
-            form_categoria = CategoriaForm(request.POST)
-            if form_categoria.is_valid():
-                form_categoria.save()
-                messages.success(request, 'Nova categoria criada com sucesso!')
-                return redirect('cardapio_app:gerenciar_cardapio')
-
-        elif tipo_form == 'alimento':
-            form_alimento = AlimentoForm(request.POST, request.FILES) # request.FILES é obrigatório para fotos!
-            if form_alimento.is_valid():
-                form_alimento.save()
-                messages.success(request, 'Novo alimento adicionado ao cardápio!')
-                return redirect('cardapio_app:gerenciar_cardapio')
-
-    context = {
-        'form_categoria': form_categoria,
-        'form_alimento': form_alimento,
-    }
-    return render(request, 'Post/gerenciar_cardapio.html', context)
-
 
 @login_required
 def deletar_categoria_view(request, categoria_id):
