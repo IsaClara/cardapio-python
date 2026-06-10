@@ -243,7 +243,7 @@ def dashboard_view(request):
             nome_categoria = request.POST.get('nome_categoria', '').strip()
             if nome_categoria:
                 Categoria.objects.get_or_create(nome=nome_categoria)
-            return redirect('/cardapio/dashboard/?salvo=sim')
+            return redirect('cardapio_app:gerenciar_cardapio')
 
         elif tipo_formulario == 'criar_alimento':
             categoria_id = request.POST.get('categoria_id')
@@ -264,7 +264,7 @@ def dashboard_view(request):
                     foto_alimento=foto_alimento,  
                     disponivel=True
                 )
-            return redirect('/cardapio/dashboard/?salvo=sim')
+            return redirect('/dashboard/?salvo=sim')
 
     categorias = Categoria.objects.prefetch_related('Alimentos').all()
     comandas_ativas = Pedido.objects.filter(status='Pendente').prefetch_related('Itens__alimento').order_by('criado_em')
