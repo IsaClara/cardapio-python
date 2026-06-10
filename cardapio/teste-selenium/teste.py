@@ -7,7 +7,7 @@ import time
 import os
 
 #variável da url
-caminho_html_login = 'http://127.0.0.1:8000/login/'
+caminho_html_login = 'https://cardapio-python.onrender.com/login/'
 
 #injeta o drive do selenium no chrome
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
@@ -22,7 +22,7 @@ senhaUsuario = driver.find_element(By.ID, 'id_password')
 
 
 login = {'loginUsuario':'Ana'}
-senha = {'senhaUsuario':'123'}
+senha = {'senhaUsuario':'258369AnA'}
 
 #adicionando valores aos inputs do modal
 loginUsuario.send_keys(login['loginUsuario'])
@@ -38,13 +38,12 @@ time.sleep(3)
 
 # --- ADICIONANDO SEGUNDA CATEGORIA: Pizza ---
 categoria_nome = driver.find_element(By.ID, 'nome_cat')
-categoria_nome.send_keys('Pizza')
+categoria_nome.send_keys('Hamburguer')
 time.sleep(2)
 
-'''
+
 btnAdicionar = driver.find_element(By.ID, 'adicionar_cat')
 btnAdicionar.click()
-'''
 
 select_cat = Select(driver.find_element(By.ID, "id_cat_select"))
 try:
@@ -67,11 +66,11 @@ preco = driver.find_element(By.ID, 'preco_comida')
 preco.send_keys('16.50')
 time.sleep(2)
 
-'''
+
 driver.find_element(By.ID,'btn_salvar').click()
 time.sleep(8)
 print("Aguardando o Django processar e recarregar a página...")
-'''
+
 
 # --- PÁGINA GERENTE ---
 driver.find_element(By.ID, 'btn_visualizar').click()
@@ -112,6 +111,7 @@ time.sleep(5)
 
 driver.close() # Fecha a aba do cliente
 driver.switch_to.window(aba_gerente)
+driver.refresh()
 time.sleep(2)
 #Ver os pedidos feito
 driver.find_element(By.ID, 'gerente_pedidos').click()
