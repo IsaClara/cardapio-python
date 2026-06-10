@@ -264,7 +264,7 @@ def dashboard_view(request):
                     foto_alimento=foto_alimento,  
                     disponivel=True
                 )
-            return redirect('/dashboard/?salvo=sim')
+            return redirect('cardapio_app:dashboard')
 
     categorias = Categoria.objects.prefetch_related('Alimentos').all()
     comandas_ativas = Pedido.objects.filter(status='Pendente').prefetch_related('Itens__alimento').order_by('criado_em')
@@ -295,11 +295,11 @@ def deletar_categoria_view(request, categoria_id):
     if request.method == 'POST':
         categoria = get_object_or_404(Categoria, id=categoria_id)
         categoria.delete()
-    return redirect('/cardapio/dashboard/?salvo=sim')
+    return redirect('cardapio_app:dashboard')
 
 @login_required
 def deletar_alimento_view(request, alimento_id):
     if request.method == 'POST':
         alimento = get_object_or_404(AlimentoCardapio, id=alimento_id)
         alimento.delete()
-    return redirect('/cardapio/dashboard/?salvo=sim')
+    return redirect('cardapio_app:dashboard')
