@@ -225,7 +225,7 @@ def login_view(request):
 
         messages.error(request, 'Usuário ou senha inválidos.')
 
-    return render(request, 'post/login.html')
+    return render(request, 'Post/login.html')
 
 #vai dar logout caso clique no botao de sair no dashboard
 def logout_view(request):
