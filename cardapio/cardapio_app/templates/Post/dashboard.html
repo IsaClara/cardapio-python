@@ -1,6 +1,6 @@
 {% load static %}
 {% load qrcode_tags %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
@@ -316,7 +316,7 @@
 
         messages.scrollTop = messages.scrollHeight;
 
-        fetch("/cardapio/chat/", {
+        fetch("{% url 'cardapio_app:chat' %}", {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -326,7 +326,7 @@
         })
           .then((res) => res.json())
           .then((data) => {
-            messages.innerHTML += "<div class='balao-msg ia'><b>IA:</b> " + data.message + "</div>";
+            messages.innerHTML += "<div class='balao-msg ia'><b>IA:</b>" + data.message + "</div>";
             messages.scrollTop = messages.scrollHeight;
           });
 
